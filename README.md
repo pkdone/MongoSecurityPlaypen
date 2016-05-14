@@ -18,7 +18,7 @@ When the project is run on a Laptop/PC, the following local environment is gener
 
 ![MongoSecurityPlaypen](MongoSecurityPlaypen.png)
 
-**WARNING** This project is licensed using the open source MIT License (refer to the 'LICENSE' file in the root directory of this project). However, when run, the project will download and install the Enterprise version of MongoDB, supplied by MongoDB Inc., which has a commercial licence. By running the 'vagrant up' command of this MongoSecurityPlaypen project, you will be implicitly accepting the terms and conditions of the MongoDB Enterprise licence enforced by MongoDB Inc.. Please consult MongoDB Inc.'s licence documents directly, for more information.
+**WARNING** *This project is licensed using the open source MIT License (refer to the 'LICENSE' file in the root directory of this project). However, when run, the project will download and install the Enterprise version of MongoDB, supplied by MongoDB Inc., which has a commercial licence. By running the 'vagrant up' command of this MongoSecurityPlaypen project, you will be implicitly accepting the terms and conditions of the MongoDB Enterprise licence enforced by MongoDB Inc.. Please consult MongoDB Inc.'s licence documents directly, for more information.*
 
 
 ## 1  How To Run
@@ -183,9 +183,7 @@ The database is configured with an admin user and a sample user (see vars/extern
     // If using Certificate/LDAP/Kerberos authentication:
     > db.getSiblingDB("$external").runCommand({usersInfo:1})
 
-The MongoDB database/collection that is populated with sample data is: maindata.records
-
-To see the contents of the sample database collection, start the Mongo Shell (see section 2.3) and run:
+The MongoDB database/collection that is populated with sample data is: 'maindata.records'. To see the contents of the sample database collection, start the Mongo Shell (see section 2.3) and run:
 
     > use maindata
     > db.records.find().pretty()
