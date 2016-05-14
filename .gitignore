@@ -1,0 +1,3 @@
+# Ignore Vagrant retry files in this directory
+*.retry
+
