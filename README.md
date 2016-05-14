@@ -1,6 +1,6 @@
 # MongoSecurityPlaypen
 
-MongoSecurityPlaypen is intended to be used for learning, exploring or demo'ing specific [MongoDB security](https://docs.mongodb.com/manual/security/) features, to be deployed only in a safe sandbox environment. The project uses [VirtualBox](https://www.virtualbox.org/), [Vagrant](https://www.vagrantup.com/) & [Ansible](https://www.ansible.com/) to build and run a demo environment on a Laptop/PC.
+MongoSecurityPlaypen is intended to be used for learning, exploring or demo'ing specific [MongoDB security](https://docs.mongodb.com/manual/security/) features, to be deployed only in a safe sandbox environment. The project uses [VirtualBox](https://www.virtualbox.org/), [Vagrant](https://www.vagrantup.com/) & [Ansible](https://www.ansible.com/) to create, configure and run a set of virtual machines on a host Laptop/PC.
 
 **WARNING** *This project is intentionally NOT "production secure" to make it easier for people to explore. For example, no firewalls are configured and passwords are passed around on the command line which can be view-able in OS user history and OS process lists. Other potential security holes are likely to exist. It is strongly suggested that you consult the [MongoDB Security Checklist](https://docs.mongodb.com/manual/administration/security-checklist/).* 
 
