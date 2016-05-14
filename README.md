@@ -52,28 +52,33 @@ Ensure the following prerequisites are already fulfilled on the host Laptop/PC:
 
 ### 2.1 SSH'ing to each of the 5 VMs
 
-    To connect to the VM hosting OpenLDAP, MIT Kerberos KDC and PyKMIP Server:
+    # Connect to the VM hosting OpenLDAP, MIT Kerberos KDC and PyKMIP Server
     > vagrant ssh centralit
 
-    To connect to the VM hosting the 1st MongoDB Database Replica in the Replica-Set:
+    # Connect to the VM hosting the 1st MongoDB Database Replica in the Replica-Set
     > vagrant ssh dbnode1
 
-    To connect to the VM hosting the 2nd MongoDB Database Replica in the Replica-Set:
+    # Connect to the VM hosting the 2nd MongoDB Database Replica in the Replica-Set
     > vagrant ssh dbnode2
 
-    To connect to the VM hosting the 3rd MongoDB Database Replica in the Replica-Set:
+    # Connect to the VM hosting the 3rd MongoDB Database Replica in the Replica-Set
     > vagrant ssh dbnode3
 
-    To connect to the VM hosting the Test Client Python Application:
+    # Connect to the VM hosting the Test Client Python Application
     > vagrant ssh client
 
 ### 2.2 Stopping, Re-starting and Clearing Out The Environment
 
 * To shutdown/halt the VMs, allowing them to be re-started at a future time, as is, for use offline, run:
+
     $ vagrant halt
+
 * To restart the VMs (inc. the MongoDB, OpenLDAP, Kerberos & PyKMIP processes) after previously halting it, just run (this won’t attempt to recreate the VMs - the VMs will just be started up again):
+
     $ vagrant up 
+
 * To completely remove the VMs, ready to start all over again with 'vagrant up', run: 
+
     $ vagrant destroy -f
 
 **Note:** Halt/Up doesn't currently work when the 'encryptdb_enabled' variable is true, because the PyKMIP Server does not have is for testing purposes only and dies not persisted saved keys to disk (see section 3. Project TODOs, below).
@@ -150,14 +155,17 @@ The sub-sections below outline the way to connect depending on the type of Mongo
 
 ### 2.4 Investigating the MongoDB Replica Set
 
-SSH to the host for one of the replicas, eg.
+* SSH to the host for one of the replicas, eg.:
+
     $ vagrant ssh dbnode1
 
 * Each mongod process is running as a service using the generated configuration file, including Security settings, at: /etc/mongod.conf
-* The output log for each mongod process is viewable at /var/log/mongod/mongod.conf - this needs to viewed as the 'mongod' OS user eg.
+
+* The output log for each mongod process is viewable at /var/log/mongod/mongod.conf - this needs to viewed as the 'mongod' OS user eg.:
+
     $ sudo -u mongod less /var/log/mongodb/mongod.log 
 
-If FIPS 140-2 is enabled, this output log file should contain an output line saying: "FIPS 140-2 mode activated"
+* If FIPS 140-2 is enabled, this output log file should contain an output line saying: "FIPS 140-2 mode activated"
 
 If Kerberos is enabled, the following file has additional environment variables set to specify the location of the Keytab and debug logging files: /etc/sysconfig/mongod
 
