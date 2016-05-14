@@ -1,0 +1,30 @@
+---
+#
+# Configure Kerberos client environemnt for a Python Client Application host
+# 
+
+- name: Install the latest version of krb5 client libs/tools + tools/libs to be able to buuld pykerberos
+  yum: pkg={{ item }} state=installed
+  with_items:
+    - krb5-workstation
+    - krb5-devel
+    - gcc
+    - python-devel
+  become: yes
+  become_method: sudo
+
+- name: Copy kerberos conf file and keytab to host machine ready to be used by client app
+  copy: src=tmp/krb5.conf dest=/etc/krb5.conf owner=vagrant group=vagrant mode=0444
+  become: yes
+  become_method: sudo
+
+- name: Obtain Kerberos ticket for MongoDB sample user to be able to connect to replica set
+  shell: echo {{ db_sampleuser_password }} | kinit {{ db_sampleuser_name }} -V
+
+- name: Install the Python Kerberos package
+  command: pip install kerberos
+  become: yes
+  become_method: sudo
+  when: client_auth_method == 'kerberos'
+
+

@@ -1,0 +1,46 @@
+//
+// Mongo Shell script to create or referenece (if LDAP/Kerberos) a sample user
+// who has access to a sample database
+//
+
+{% include "authenticate.js.j2" %}
+
+{% if client_auth_method == 'userpwd' %}
+// Creating local database user for SCRAM-SHA-1 user access
+db.getSiblingDB("admin").createUser(
+    {
+      user : "{{ db_sampleuser_name }}",
+      pwd  : "{{ db_sampleuser_password }}",
+      roles: [ { role: "read", db: "maindata" } ]
+    }
+ );
+{% elif client_auth_method == 'cert' %}
+// Creating external authentication reference for certficate user accss
+db.getSiblingDB("$external").createUser(
+    {
+      user : "CN={{ db_sampleuser_name }}{{ client_dn_suffix }}",
+      roles: [ { role: "read", db: "maindata" } ]
+    }
+ );
+{% elif client_auth_method == 'ldap' %}
+// Creating external authentication reference for LDAP user access
+db.getSiblingDB("$external").createUser(
+    {
+      user : "{{ db_sampleuser_name }}",
+      roles: [ { role: "read", db: "maindata" } ]
+    }
+ );
+{% elif client_auth_method == 'kerberos' %}
+// Creating external authentication reference fer Kerberos user access
+db.getSiblingDB("$external").createUser(
+    {
+      user : "{{ db_sampleuser_name }}@{{ org_name|upper }}.{{ org_type|upper }}",
+      roles: [ { role: "read", db: "maindata" } ]
+    }
+ );
+{% else %}
+// Nothing to do as authentication is not enabled in MongoDB
+{% endif %}
+
+
+

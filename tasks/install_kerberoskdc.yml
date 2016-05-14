@@ -1,0 +1,55 @@
+---
+#
+# Install and configure Kerberos KDC (MIT's version: "krb5")
+# 
+
+- name: Install the latest version of krb5 + random number generator tool (RNG)
+  yum: pkg={{ item }} state=installed
+  with_items:
+    - krb5-server
+    - krb5-workstation
+    - rng-tools
+
+- name: Fix random number generator start parameters, ensure started on re-boot and start it now
+  lineinfile: dest=/usr/lib/systemd/system/rngd.service regexp='^ExecStart=.*' line='ExecStart=/sbin/rngd -f -r /dev/urandom'
+- command: systemctl daemon-reload
+- service: name=rngd enabled=yes state=started
+
+- name: Modify default Kerberos config files to swap out EXAMPLE.COM for our defined realm
+  replace: dest=/var/kerberos/krb5kdc/kadm5.acl regexp='EXAMPLE\.COM' replace='{{ org_name|upper }}.{{ org_type|upper }}'
+- replace: dest=/var/kerberos/krb5kdc/kdc.conf regexp='EXAMPLE\.COM' replace='{{ org_name|upper }}.{{ org_type|upper }}'
+- replace: dest=/etc/krb5.conf regexp='{{ item.regexp }}' replace='{{ item.token }}'
+  with_items:
+    - {regexp: '^#  kdc =.*', token: '  kdc = centralit.vagrant.dev'}
+    - {regexp: '^#  admin_server =.*', token: '  admin_server = centralit.vagrant.dev'}
+    - {regexp: 'EXAMPLE\.COM', token: '{{ org_name|upper }}.{{ org_type|upper }}'}
+    - {regexp: 'example\.com', token: '{{ org_name }}.{{ org_type }}'}
+    - {regexp: '^#', token: ''}
+
+- name: Create the KDC database for the new domain
+  command: /sbin/kdb5_util create -s -r {{ org_name|upper }}.{{ org_type|upper }} -P {{ kdc_master_password }}
+
+- name: Run kadmin commands to create principles
+  command: kadmin.local -q "{{ item }}"
+  with_items:
+    - addprinc -pw {{ db_adminuser_password }} {{ db_adminuser_name }}
+    - addprinc -pw {{ db_sampleuser_password }} {{ db_sampleuser_name }}
+    - addprinc -randkey mongodb/centralit.vagrant.dev
+    - addprinc -randkey mongodb/dbnode1.vagrant.dev
+    - addprinc -randkey mongodb/dbnode2.vagrant.dev
+    - addprinc -randkey mongodb/dbnode3.vagrant.dev
+    - ktadd mongodb/centralit.vagrant.dev
+    - ktadd mongodb/dbnode1.vagrant.dev
+    - ktadd mongodb/dbnode2.vagrant.dev
+    - ktadd mongodb/dbnode3.vagrant.dev
+
+- name: Ensure krb5 KDC server & admin server starts when host boots and start it now
+  service: name=krb5kdc enabled=yes state=started
+
+- name: Copy kerberos conf file and keytab to tmp file ready to be copied to mongod host machines
+  copy: src=/etc/{{ item }} remote_src=True dest=/vagrant/tmp/{{ item }}
+  with_items:
+    - krb5.conf
+    - krb5.keytab
+
+

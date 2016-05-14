@@ -1,0 +1,42 @@
+//
+// Mongo Shell script to create or referenece (if LDAP/Kerberos) a database
+// administrator
+//
+
+{% if client_auth_method == 'userpwd' %}
+// Creating local database user for SCRAM-SHA-1 user access
+db.getSiblingDB("admin").createUser(
+    {
+      user : "{{ db_adminuser_name }}",
+      pwd  : "{{ db_adminuser_password }}",
+      roles: [ { role: "root", db: "admin" } ]
+    }
+ );
+{% elif client_auth_method == 'cert' %}
+// Creating external authentication reference for certficate user accss
+db.getSiblingDB("$external").createUser(
+    {
+      user : "CN={{ db_adminuser_name }}{{ client_dn_suffix }}",
+      roles: [ { role: "root", db: "admin" } ]
+    }
+ );
+{% elif client_auth_method == 'ldap' %}
+// Creating external authentication reference for LDAP user access
+db.getSiblingDB("$external").createUser(
+    {
+      user : "{{ db_adminuser_name }}",
+      roles: [ { role: "root", db: "admin" } ]
+    }
+ );
+{% elif client_auth_method == 'kerberos' %}
+// Creating external authentication reference fer Kerberos user access
+db.getSiblingDB("$external").createUser(
+    {
+      user : "{{ db_adminuser_name }}@{{ org_name|upper }}.{{ org_type|upper }}",
+      roles: [ { role: "root", db: "admin" } ]
+    }
+ );
+{% else %}
+// Nothing to do as authentication is not enabled in MongoDB
+{% endif %}
+

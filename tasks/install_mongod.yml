@@ -1,0 +1,15 @@
+---
+#
+# Install MongoDB database ensuring Huge Pages is disabled
+# 
+
+- name: Configure a script to disable huge pages
+  copy: src=os/disable-transparent-hugepages.j2 dest=/etc/init.d/disable-transparent-hugepages mode=a+x
+- service: name=disable-transparent-hugepages enabled=yes state=started
+
+- name: Install and configure MongoDB from the enterprise binaries repository
+  template: src=files/mongod/mongodb-enterprise.repo.j2 dest=/etc/yum.repos.d/mongodb-enterprise.repo
+- copy: src=mongod/99-mongodb-nproc.conf.j2 dest=/etc/security/limits.d/99-mongodb-nproc.conf
+- yum: name=mongodb-enterprise state=latest
+- template: src=files/mongod/mongod.conf.j2 dest=/etc/mongod.conf owner=mongod group=mongod mode=u+rw
+

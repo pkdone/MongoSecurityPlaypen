@@ -1,0 +1,16 @@
+//
+// Mongo Shell script to configure a replica set
+//
+
+repsetMemberCount = 3;
+config = {"_id": "{{ rep_set_name }}", "members": []};
+
+for (var replica = 1; replica <= repsetMemberCount; replica++) {
+    var priority = (replica == 1 ? 2 : 1);
+    config.members.push({"_id": replica, "host": "dbnode" + replica + ".vagrant.dev:27017", "priority": priority});
+}
+
+print("Replica Set configuration:");
+printjson(config);
+rs.initiate(config);
+

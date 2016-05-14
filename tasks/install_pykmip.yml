@@ -1,0 +1,21 @@
+---
+#
+# Install and configure PyKMIP
+# 
+
+- name: Install the Python package manager (PIP)
+  get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/home/vagrant/get-pip.py mode=a+x
+- command: /home/vagrant/get-pip.py
+- file: path=/home/vagrant/get-pip.py state=absent
+
+- name: Install PyKMIP server (latest version at the time, 0.4.1, throws error - enumeration type class BatchErrorContinuationOption must be type EnumMeta)
+  command: pip install PyKMIP==0.4.0
+
+- name: Generate self-signed CA, server key/cert and client key/cert for KMIP use
+  include: tasks/generate_kmip_keys.yml
+
+- name: Start the PyKMIP service
+  template: src=files/pykmip/pykmip_server.py.j2 dest=/sbin/pykmip_server.py mode=a+x
+- copy: src=files/pykmip/pykmip.service dest=/usr/lib/systemd/system/pykmip.service
+- service: name=pykmip enabled=yes state=started
+

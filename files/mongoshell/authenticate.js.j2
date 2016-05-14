@@ -1,0 +1,42 @@
+// ***START: Imported JavaScript snippet to authenticate with MongoDB***
+{% if client_auth_method == 'userpwd' %}
+// Authenticating with DB local user
+db.getSiblingDB("admin").auth(
+    {
+         mechanism: "SCRAM-SHA-1",
+         user: "{{ db_adminuser_name }}",
+         pwd:  "{{ db_adminuser_password }}",
+         digestPassword: true
+    }
+ );
+{% elif client_auth_method == 'cert' %}
+// Authenticating with Certificate user
+db.getSiblingDB("$external").auth(
+    {
+         mechanism: "MONGODB-X509",
+         user: "CN={{ db_adminuser_name }}{{ client_dn_suffix }}"
+    }
+ );
+{% elif client_auth_method == 'ldap' %}
+// Authenticating with LDAP user
+db.getSiblingDB("$external").auth(
+    {
+         mechanism: "PLAIN",
+         user: "{{ db_adminuser_name }}",
+         pwd:  "{{ db_adminuser_password }}",
+         digestPassword: false
+    }
+ );
+{% elif client_auth_method == 'kerberos' %}
+// Authenticating with Kerberos user
+db.getSiblingDB("$external").auth(
+    {
+         mechanism: "GSSAPI",
+         user: "{{ db_adminuser_name }}@{{ org_name|upper }}.{{ org_type|upper }}"
+    }
+ );
+{% else %}
+// Nothing to do as authentication is not enabled in MongoDB
+{% endif %}
+// ***END: Imported JavaScript snippet to authenticate with MongoDB***
+

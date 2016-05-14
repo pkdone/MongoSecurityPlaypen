@@ -1,0 +1,36 @@
+---
+#
+# Set "*_auth_mechanism" variables for both client and internal authentication
+# to appropriate values for use in mongod.conf, depending on what 
+# authentication methods have been chosen in environment_vars.yml
+# 
+
+### Client Authentication ###
+
+- name: Set flag for userpwd client auth
+  set_fact: client_auth_mechanism='SCRAM-SHA-1'
+  when: client_auth_method == 'userpwd'
+
+- name: Set flag for cert client auth
+  set_fact: client_auth_mechanism='MONGODB-X509'
+  when: client_auth_method == 'cert'
+
+- name: Set flag for ldap client auth
+  set_fact: client_auth_mechanism='PLAIN'
+  when: client_auth_method == 'ldap'
+
+- name: Set flag for kerberos client auth
+  set_fact: client_auth_mechanism='GSSAPI'
+  when: client_auth_method == 'kerberos'
+
+
+### Internal Authentication ###
+
+- name: Set flag for keyfile internal auth
+  set_fact: internal_auth_mechanism='keyFile'
+  when: internal_auth_method == 'keyfile'
+
+- name: Set flag for cert internal auth
+  set_fact: internal_auth_mechanism='x509'
+  when: internal_auth_method == 'cert'
+

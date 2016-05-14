@@ -1,0 +1,17 @@
+//
+// Mongo Shell script to re-configure a replica set by re-setting the priority
+// of all members to the same value
+//
+
+{% include "authenticate.js.j2" %}
+
+config = rs.conf();
+
+for (var index = 0; index < config.members.length; index++) {
+    config.members[index].priority = 1;
+}
+
+print("Replica Set new configuration:");
+printjson(config);
+rs.reconfig(config);
+

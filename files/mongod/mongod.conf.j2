@@ -1,0 +1,79 @@
+processManagement:
+   fork: true
+   pidFilePath: /var/run/mongodb/mongod.pid
+
+storage:
+   dbPath: "/var/lib/mongo"
+   journal:
+      enabled: true
+   engine: "wiredTiger"
+
+{% if auditing_enabled %}
+auditLog:
+   destination: file
+   format: BSON
+   path: /var/lib/mongo/auditLog.bson
+{% endif %}
+
+systemLog:
+   path: "/var/log/mongodb/mongod.log"
+   verbosity: 1
+   destination: file
+   logAppend: true
+
+net:
+   port: 27017
+{% if ssl_enabled %}
+   ssl:
+      mode: requireSSL
+      PEMKeyFile: /etc/ssl/mongodb.pem
+      CAFile: /etc/ssl/mongodbca.pem
+{% endif %}
+{% if ssl_enabled and client_auth_method != 'cert' %}
+      allowConnectionsWithoutCertificates: true
+{% endif %}
+{% if ssl_enabled and fips140_2_enabled %}
+      FIPSMode: true
+{% endif %}
+
+replication:
+    replSetName: "{{ rep_set_name }}"
+
+{% if internal_auth_method != 'none' or encryptdb_enabled %}
+security:
+{% endif %}
+{% if internal_auth_method != 'none' %}
+   authorization: "enabled"
+   clusterAuthMode: {{ internal_auth_mechanism }}
+{% endif %}
+{% if internal_auth_method == 'keyfile' %}
+   keyFile: "/etc/security/internal-auth-mongodb-keyfile"
+{% endif %}
+{% if encryptdb_enabled %}
+   enableEncryption: true
+   encryptionCipherMode: "AES256-CBC"
+{% endif %}
+{% if encryptdb_enabled and encryptdb_key_loc == 'keyfile' %}
+   encryptionKeyFile: "/etc/security/encryption-mongodb-keyfile"
+{% endif %}
+{% if encryptdb_enabled and encryptdb_key_loc == 'kmip' %}
+   kmip:
+      serverName: centralit
+      serverCAFile: /etc/ssl/kmiprootCA.pem
+      clientCertificateFile: /etc/ssl/kmipclient.pem
+      clientCertificatePassword: {{ kmip_client_key_passwd }}
+{% endif %}
+
+{% if client_auth_method != 'none' or auditing_enabled%}
+setParameter:
+{% endif %}
+{% if client_auth_method == 'ldap' %}
+   saslauthdPath: "/var/run/saslauthd/mux"
+{% endif %}
+{% if client_auth_method != 'none' %}
+   authenticationMechanisms: {{ client_auth_mechanism }}
+{% endif %}
+{% if auditing_enabled %}
+   auditAuthorizationSuccess: true
+{% endif %}
+

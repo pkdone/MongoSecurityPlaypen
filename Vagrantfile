@@ -1,0 +1,68 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+    # Install Centos 7.1
+    config.vm.box = "bento/centos-7.1"
+
+    # CentrailIT VM
+    config.vm.define :centralit do |centralit|
+        centralit.vm.provider "virtualbox" do |vb|
+            vb.name = "centralit"
+            vb.memory = 512
+        end
+
+        centralit.vm.hostname = "centralit.vagrant.dev"
+        centralit.vm.network :private_network, ip: "192.168.14.100"
+
+        centralit.vm.provision :ansible do |ansible|
+            ansible.playbook = "centralit.yml"
+        end
+    end
+
+    N = 3
+
+    # Node VM x3
+    (1..N).each do |i|
+        # Create VMs in reverse order: 3rd, 2nd, 1st so can initiate further provisioning on 1st VM at end of cycle
+        node = N + 1 - i
+
+        config.vm.define "dbnode#{node}" do |server|
+            server.vm.provider "virtualbox" do |vb|
+                vb.name = "dbnode#{node}"
+                vb.memory = 512
+            end
+
+            server.vm.hostname = "dbnode#{node}.vagrant.dev"
+            server.vm.network :private_network, ip: "192.168.14.10#{node}"
+
+            server.vm.provision :ansible do |ansible|
+                ansible.playbook = "dbnode.yml"
+            end
+
+            if i == N
+                server.vm.provision :ansible do |ansible|
+                    ansible.playbook = "replicaset.yml"
+                end
+            end
+        end
+    end
+
+    # Client VM
+    config.vm.define :client do |client|
+        client.vm.provider "virtualbox" do |vb|
+            vb.name = "client"
+            vb.memory = 512
+        end
+
+        client.vm.hostname = "client.vagrant.dev"
+        client.vm.network :private_network, ip: "192.168.14.109"
+
+        client.vm.provision :ansible do |ansible|
+            ansible.playbook = "client.yml"
+        end
+    end
+=begin
+=end
+end
+

@@ -1,0 +1,49 @@
+---
+- name: Configure and start replica set via first MongoDB instance
+  hosts: all
+  vars_files:
+    - vars/external_vars.yml
+  become: yes
+  become_method: sudo
+  become_user: mongod
+  tasks:
+    - name: Set Mongo Shell command line params
+      include: tasks/set_mongoshell_params.yml
+
+    - name: Set the Ceritifcate/LDAP Distinguished Names
+      include: tasks/set_distinguished_names.yml
+
+    - name: Obtain Kerberos ticket for MongoDB admin user to be able to connect to replica set
+      shell: echo {{ db_adminuser_password }} | kinit {{ db_adminuser_name }} -V
+      when: client_auth_method == "kerberos"
+
+    - name: Template Mongo Shell JavaScript files into local /tmp dir
+      template: src=files/mongoshell/{{item}}.j2 dest=/tmp/{{item}} mode=u+rw
+      with_items:
+        - configure_replicaset.js
+        - create_dbadminuser.js
+        - generate_sampledata.js
+        - create_normaluser.js
+        - reset_priorities.js
+
+    - name: Configure replica set cluster then pause to allow primary to come up properly
+      command: mongo {{ connect_string }} /tmp/configure_replicaset.js
+    - pause: seconds=30
+
+    - name: Run Mongo shell scripts for creating users and sample data
+      command: mongo {{ connect_string }} /tmp/{{ item }}
+      with_items:
+        - create_dbadminuser.js
+        - generate_sampledata.js
+        - create_normaluser.js
+        - reset_priorities.js
+
+    - name: Clean up all temporarily generated files
+      file: path=/tmp/{{ item }} state=absent
+      with_items:
+        - configure_replicaset.js
+        - create_dbadminuser.js
+        - generate_sampledata.js
+        - create_normaluser.js
+        - reset_priorities.js
+

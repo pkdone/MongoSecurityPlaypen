@@ -1,0 +1,21 @@
+---
+#
+# Check correct combination of environment variable values has been set and 
+# fail with error message if not the case.
+# 
+
+- fail: msg="Invalid settings - if client_auth_method is set to 'none' than internal_auth_method must be set to 'none' too, in external_vars.yml."
+  when: client_auth_method == 'none' and internal_auth_method != 'none'
+
+- fail: msg="Invalid settings - if client_auth_method is not set to 'none' than internal_auth_method must be set to a value other than 'none', in external_vars.yml."
+  when: client_auth_method != 'none' and internal_auth_method == 'none'
+
+- fail: msg="Invalid settings - if internal_auth_method is set to 'cert' then client_auth_method must also be set to 'cert', in external_vars.yml."
+  when: internal_auth_method == 'cert' and client_auth_method != 'cert'
+
+- fail: msg="Invalid settings - if client_auth_method is set to 'cert' then ssl_enabled must be set to true, in external_vars.yml."
+  when: client_auth_method == 'cert' and ssl_enabled == false
+
+- fail: msg="Invalid settings - currently not supported to have the combination of encryptdb_enabled and fips140_2_enabled as true, in external_vars.yml."
+  when: encryptdb_enabled and fips140_2_enabled
+

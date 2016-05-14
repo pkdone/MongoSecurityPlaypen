@@ -1,0 +1,31 @@
+#!/usr/bin/python
+import logging
+from kmip.services.kmip_server import KMIPServer
+
+log = logging.getLogger(__name__)
+
+# Note: Would ideally bind to hostname "centralit" however have to provide IP 
+# address as vagrant has already mapped "centralit" to local loopback address
+# in /etc/hosts
+server = KMIPServer(
+    host="192.168.14.100",
+    port=5696,
+    keyfile="/etc/ssl/kmipserver.key",
+    certfile="/etc/ssl/kmipserver.crt",
+    cert_reqs="CERT_REQUIRED",
+    ssl_version="PROTOCOL_TLSv1",
+    ca_certs="/etc/ssl/kmiprootCA.pem",
+    do_handshake_on_connect=True,
+    suppress_ragged_eofs=True)
+
+log.info("Started PyKMIP server")
+
+try:
+    server.serve()
+except Exception as e:
+    log.info('Exception: {0}'.format(e))
+finally:
+    server.close()
+
+log.info("Stopped KMIP server")
+

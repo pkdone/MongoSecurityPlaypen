@@ -1,0 +1,13 @@
+//
+// Mongo Shell script to create some sample data in a sample database and
+// collection
+//
+
+{% include "authenticate.js.j2" %}
+
+db = db.getSiblingDB("maindata");
+db.records.insert({name: 'Alice', age: 41});
+db.records.insert({name: 'Bob', age: 39});
+db.records.insert({name: 'Kate', age: 40});
+db.records.insert({name: 'William', age: 41});
+

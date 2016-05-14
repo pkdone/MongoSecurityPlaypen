@@ -1,0 +1,36 @@
+---
+## FEATURE ENABLEMENT
+client_auth_method     :  ldap      # OPTIONS: none | userpwd | cert | ldap | kerberos
+internal_auth_method   :  keyfile   # OPTIONS: none | keyfile | cert   (must not be none if client authentication is not none)
+ssl_enabled            :  true      # OPTIONS: false | true            (must be true if client authentication is set to cert)
+auditing_enabled       :  true      # OPTIONS: false | true
+encryptdb_enabled      :  true      # OPTIONS: false | true
+encryptdb_key_loc      :  kmip      # OPTIONS: kmip | keyfile          (ignored if encryptdb disabled)
+fips140_2_enabled      :  false     # OPTIONS: false | true            (ignored if ssl disabled)
+
+## MONGODB DATABASE USERNAMES & PASSWORDS
+db_adminuser_name      :  dbmaster
+db_adminuser_password  :  adminpasswd123
+db_sampleuser_name     :  jsmith
+db_sampleuser_password :  Pa55word124
+
+## ELEMENTS OF DISTINGUISHED NAMES (DNs) FOR TLS/SSL CERTIFICATES, LDAP ENTITIES & KERBEROS REALMS
+org_type               :  com                     # Ensure only alpha-numerics & no spaces
+org_name               :  WizzyIndustries         # Ensure only alpha-numerics & no spaces
+org_location           :  London
+org_country            :  GB
+org_inftech_dept       :  IT Department
+org_business_dept      :  Human Resources
+
+## MONGODB REPLICA SET
+rep_set_name           :  DemoRepSet
+
+## OTHER PASSWORDS
+ldap_master_password   :  ldapMasterPa55wd123
+ldap_manager_password  :  ldapManagerPa55wd123
+kdc_master_password    :  kdcMasterPa55wd123
+kmip_ca_key_passwd     :  kmipCAPa55word789
+kmip_client_key_passwd :  kmipClientPa55word456
+tls_ca_key_passwd      :  tlsCAPa55word135
+tls_client_key_passwd  :  tlsClientPa55word678
+

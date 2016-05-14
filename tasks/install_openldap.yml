@@ -1,0 +1,53 @@
+---
+#
+# Install and configure OpenLDAP
+# 
+
+- name: Install the latest version of OpenLDAP and ensure always started
+  yum: pkg={{ item }} state=installed
+  with_items:
+    - openldap
+    - openldap-clients
+    - openldap-servers
+- service: name=slapd enabled=yes state=started
+
+- name: Generate a load of password hashes ready for use with LDAP
+  command: /usr/sbin/slappasswd -s {{ item }}
+  with_items:
+    - "{{ ldap_master_password }}"
+    - "{{ ldap_manager_password }}"
+    - "{{ db_adminuser_password }}"
+    - "{{ db_sampleuser_password }}"
+  register: ldap_passwds
+- set_fact:
+    masterpasswd_hash: "{{ ldap_passwds.results[0].stdout }}"
+    managerpasswd_hash: "{{ ldap_passwds.results[1].stdout }}"
+    adminuserpasswd_hash: "{{ ldap_passwds.results[2].stdout }}"
+    sampleuserpasswd_hash: "{{ ldap_passwds.results[3].stdout }}"
+
+- name: Template a load of LDAP related files into local /tmp dir
+  template: src=files/openldap/{{item}}.j2 dest=/tmp/{{item}}
+  with_items:
+    - chmasterpwd.ldif
+    - chdomain.ldif
+    - basedomain.ldif
+
+- name: Run LDAP commands with LDIFF files to modify OpenLDAP schema
+  command: /usr/bin/ldapadd -Y EXTERNAL -H ldapi:/// -f {{ item }}
+  with_items:
+    - /tmp/chmasterpwd.ldif
+    - /etc/openldap/schema/cosine.ldif 
+    - /etc/openldap/schema/nis.ldif
+    - /etc/openldap/schema/inetorgperson.ldif
+    - /tmp/chdomain.ldif 
+
+- name: Run ldif file to import the base infrastructure
+  command: /usr/bin/ldapadd -x -D cn=Manager,dc={{ org_name }},dc={{ org_type }} -w {{ ldap_manager_password }} -f /tmp/basedomain.ldif
+
+- name: Clean up all temporarily generated files
+  file: path=/tmp/{{ item }} state=absent
+  with_items:
+    - chmasterpwd.ldif
+    - chdomain.ldif
+    - basedomain.ldif
+

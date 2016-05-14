@@ -1,0 +1,17 @@
+---
+#
+# Set the Mongo Shell connect paramerers
+#
+
+# NOTE: Important to specify mongod full domain hostname for connection below, when using Kerberos
+- name: Set NO ssl shell connect string
+  set_fact: connect_string='dbnode1.vagrant.dev:27017/test '
+
+- name: Set SSL shell connect string
+  set_fact: connect_string='dbnode1.vagrant.dev:27017/test --ssl --sslCAFile /etc/ssl/mongodbca.pem '
+  when: ssl_enabled and client_auth_method != 'cert'
+
+- name: Set SSL + Certificate Authentication shell connect string
+  set_fact: connect_string='dbnode1.vagrant.dev:27017/test --ssl --sslCAFile /etc/ssl/mongodbca.pem --sslPEMKeyFile /etc/ssl/adminuser_client.pem --sslPEMKeyPassword {{ tls_client_key_passwd }} '
+  when: client_auth_method == 'cert'
+

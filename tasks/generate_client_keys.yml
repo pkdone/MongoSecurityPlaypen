@@ -1,0 +1,41 @@
+---
+#
+# Generate TLS/SSL client key/cert files for encryption over the wire for various users
+# 
+
+- name: Create private key for ADMIN USER, creating a certificate signing request and signing the CSR using the CA root key
+  shell: /usr/bin/openssl {{ item }}
+  with_items:
+    - genrsa -aes256 -passout pass:{{ tls_client_key_passwd }} -out /vagrant/tmp/adminuser_client.key 2048
+    - req -new -key /vagrant/tmp/adminuser_client.key -passin pass:{{ tls_client_key_passwd }} -out /vagrant/tmp/adminuser_client.csr -subj "{{ client_dn_prefix }}{{ db_adminuser_name  }}"
+    - x509 -req -in /vagrant/tmp/adminuser_client.csr -CA /vagrant/tmp/mongodbca.pem -CAkey /vagrant/tmp/mongodbca.key -passin pass:{{ tls_ca_key_passwd }} -CAcreateserial -extfile /vagrant/files/ssl/ssl_extns.cfg -extensions v3_req -out /vagrant/tmp/adminuser_client.crt -days 500
+
+- name: Create private key for SAMPLE USER, creating a certificate signing request and signing the CSR using the CA root key
+  shell: /usr/bin/openssl {{ item }}
+  with_items:
+    - genrsa -out /vagrant/tmp/sampleuser_client.key 2048
+    - req -new -key /vagrant/tmp/sampleuser_client.key -out /vagrant/tmp/sampleuser_client.csr -subj "{{ client_dn_prefix }}{{ db_sampleuser_name }}"
+    - x509 -req -in /vagrant/tmp/sampleuser_client.csr -CA /vagrant/tmp/mongodbca.pem -CAkey /vagrant/tmp/mongodbca.key -passin pass:{{ tls_ca_key_passwd }} -CAcreateserial -extfile /vagrant/files/ssl/ssl_extns.cfg -extensions v3_req -out /vagrant/tmp/sampleuser_client.crt -days 500
+
+- name: Concatenate client certificate and key together (need to put it in tmp as client VM will also need it
+  shell: cat /vagrant/tmp/{{ item }}.crt /vagrant/tmp/{{ item }}.key > /vagrant/tmp/{{ item }}.pem
+  with_items:
+    - adminuser_client
+    - sampleuser_client
+
+- name: Make a copy of the client key/certificates to local dbnode1 VM so can be used by mongo shell scripts to authenticate
+  copy: src=tmp/{{ item }}.pem dest=/etc/ssl/{{ item }}.pem owner=mongod group=mongod mode=0400
+  with_items:
+    - adminuser_client
+    - sampleuser_client
+
+- name: Clean up all intermediate client keys / certs
+  file: path=/tmp/{{ item }} state=absent
+  with_items:
+    - adminuser_client.key
+    - adminuser_client.csr
+    - adminuser_client.crt
+    - sampleuser_client.key
+    - sampleuser_client.csr
+    - sampleuser_client.crt
+

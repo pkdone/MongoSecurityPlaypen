@@ -1,0 +1,7 @@
+---
+#
+# Clear out all files that were generated in the vagrant tmp directoy from 
+# this or a previious run
+# 
+
+- shell: rm -rf /vagrant/tmp/*

@@ -1,0 +1,53 @@
+---
+- name: Configure and run a MongoDB secure test client application written in Python
+  hosts: all
+  vars_files:
+    - vars/external_vars.yml
+  tasks:
+    - name: Populate /etc/hosts file with hostname entries for all VMs
+      include: tasks/set_hosts.yml
+      become: yes
+      become_method: sudo
+
+    - name: Set the Ceritifcate/LDAP Distinguished Names
+      include: tasks/set_distinguished_names.yml
+
+    - name: Install the Python package manager (PIP)
+      get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/home/vagrant/get-pip.py mode=a+x
+    - command: /home/vagrant/get-pip.py
+      become: yes
+      become_method: sudo
+    - file: path=/home/vagrant/get-pip.py state=absent
+
+    - name: Install the Python MongoDB Driver (PyMongo)
+      command: pip install pymongo
+      become: yes
+      become_method: sudo
+
+    - name: Install and configure Kerberos client for python client app
+      include: tasks/configure_pyclient_kerberos_env.yml
+      when: client_auth_method == "kerberos"
+
+    - name: Copy SSL CA file over (if SSL enabled), readable to all
+      copy: src=tmp/mongodbca.pem dest=/etc/ssl/mongodbca.pem mode=0444
+      become: yes
+      become_method: sudo
+      when: ssl_enabled or client_auth_method == 'cert'
+
+    - name: Copy over the sample client key/certificate so client apps can authenticate
+      copy: src=tmp/sampleuser_client.pem dest=/home/vagrant/sampleuser_client.pem mode=0400
+      when: client_auth_method == 'cert'
+
+    - name: Template the PyMongo script files into local dir
+      template: src=files/pyclient/TestSecPyClient.py dest=/home/vagrant/TestSecPyClient.py mode=u+rwx
+
+    - name: Run test client python script
+      command: /home/vagrant/TestSecPyClient.py
+      register: output
+    - debug: var=output.stdout.split('\n')
+    - debug: var=output.stderr.split('\n')
+
+    - name: Clear out tmp files
+      include: tasks/clean_tmp_files.yml
+
+

@@ -1,0 +1,41 @@
+---
+#
+# Add entries to /etc/hosts for all VMs (except own, which is already defined)
+# 
+
+- template: src=files/os/extrahosts.j2 dest=/vagrant/tmp/extrahosts
+
+- replace: dest=/vagrant/tmp/extrahosts regexp='^centralit:'
+  when: ansible_hostname != "centralit"
+
+- replace: dest=/vagrant/tmp/extrahosts regexp='^centralit:' replace='#'
+  when: ansible_hostname == "centralit"
+
+- replace: dest=/vagrant/tmp/extrahosts regexp='^dbnode1:'
+  when: ansible_hostname != "dbnode1"
+
+- replace: dest=/vagrant/tmp/extrahosts regexp='^dbnode1:' replace='#'
+  when: ansible_hostname == "dbnode1"
+
+- replace: dest=/vagrant/tmp/extrahosts regexp='^dbnode2:'
+  when: ansible_hostname != "dbnode2"
+
+- replace: dest=/vagrant/tmp/extrahosts regexp='^dbnode2:' replace='#'
+  when: ansible_hostname == "dbnode2"
+
+- replace: dest=/vagrant/tmp/extrahosts regexp='^dbnode3:'
+  when: ansible_hostname != "dbnode3"
+
+- replace: dest=/vagrant/tmp/extrahosts regexp='^dbnode3:' replace='#'
+  when: ansible_hostname == "dbnode3"
+
+- replace: dest=/vagrant/tmp/extrahosts regexp='^client:'
+  when: ansible_hostname != "client"
+
+- replace: dest=/vagrant/tmp/extrahosts regexp='^client:' replace='#'
+  when: ansible_hostname == "client"
+
+- shell: cat /vagrant/tmp/extrahosts >> /etc/hosts
+
+- file: path=/vagrant/tmp/extrahosts state=absent
+

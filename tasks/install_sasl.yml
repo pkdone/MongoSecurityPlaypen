@@ -1,0 +1,10 @@
+---
+#
+# Install and configure SASL ready for LDAP communication
+# 
+
+- name: Install and configure Linux Simple Authentication and Security Layer (SASL) layer for LDAP connectivity
+  yum: pkg=cyrus-sasl state=installed
+- lineinfile: dest=/etc/sysconfig/saslauthd regexp='^MECH=.*' line='MECH=ldap'
+- template: src=files/sasl/saslauthd.conf.j2 dest=/etc/saslauthd.conf
+- service: name=saslauthd enabled=yes state=started
