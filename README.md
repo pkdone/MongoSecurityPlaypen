@@ -1,9 +1,9 @@
 # MongoSecurityPlaypen
 Copyright (c) 2016 Paul Done
 
-**WARNING** *This project is intentionally NOT "production secure" to make it easier for people to explore. For example, no firewalls are configured and passwords are passed around on the command line which can be view-able in OS user history and OS process lists. Other potential security holes are likely to exist. It is strongly suggested that you consult the [MongoDB Security Checklist](https://docs.mongodb.com/manual/administration/security-checklist/).* 
-
 MongoSecurityPlaypen is intended to be used for learning, exploring or demo'ing specific [MongoDB security](https://docs.mongodb.com/manual/security/) features, in a safe sandbox environment. The project uses [VirtualBox](https://www.virtualbox.org/), [Vagrant](https://www.vagrantup.com/) & [Ansible](https://www.ansible.com/) to build and run a demo environment on a Laptop/PC.
+
+**WARNING** *This project is intentionally NOT "production secure" to make it easier for people to explore. For example, no firewalls are configured and passwords are passed around on the command line which can be view-able in OS user history and OS process lists. Other potential security holes are likely to exist. It is strongly suggested that you consult the [MongoDB Security Checklist](https://docs.mongodb.com/manual/administration/security-checklist/).* 
 
 The project demonstrates the following MongoDB Security capabilities.
 
@@ -18,8 +18,6 @@ The project demonstrates the following MongoDB Security capabilities.
 When the project is run on a Laptop/PC, the following local environment is generated, in a set of 5 Virtual Machines:
 
 ![MongoSecurityPlaypen](MongoSecurityPlaypen.png)
-
-OpenLDAP, MIT's Keberos KDC and the PyKMIP Server are all installed and configured on the 'centralit' VM.
 
 **WARNING** This project is licensed using the open source MIT License (refer to the 'LICENSE' file in the root directory of this project). However, when run, the project will download and install the Enterprise version of MongoDB, supplied by MongoDB Inc., which has a commercial licence. By running the 'vagrant up' command of this MongoSecurityPlaypen project, you will be implicitly accepting the terms and conditions of the MongoDB Enterprise licence enforced by MongoDB Inc.. Please consult MongoDB Inc.'s licence documents directly, for more information.
 
@@ -152,12 +150,11 @@ The sub-sections below outline the way to connect depending on the type of Mongo
 
 ### 2.4 Investigating the MongoDB Replica Set
 
-SSH to the host for one of the replicas, eg.:
+SSH to the host for one of the replicas, eg.
     $ vagrant ssh dbnode1
 
-Each mongod process is running as a service using the generated configuration file, including Security settings, at: /etc/mongod.conf
-
-The output log for each mongod process is viewable at /var/log/mongod/mongod.conf - this needs to viewed as the 'mongod' OS user eg.:
+* Each mongod process is running as a service using the generated configuration file, including Security settings, at: /etc/mongod.conf
+* The output log for each mongod process is viewable at /var/log/mongod/mongod.conf - this needs to viewed as the 'mongod' OS user eg.
     $ sudo -u mongod less /var/log/mongodb/mongod.log 
 
 If FIPS 140-2 is enabled, this output log file should contain an output line saying: "FIPS 140-2 mode activated"
