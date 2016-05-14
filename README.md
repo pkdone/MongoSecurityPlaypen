@@ -94,15 +94,15 @@ The sub-sections below outline the way to connect depending on the type of Mongo
 #### 2.3.1 Connect with no authentication enabled
 
     $ vagrant ssh dbnode1
-    $ mongo    **# If SSL disabled**
-    $ mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  **# If SSL enabled**
+    $ mongo    # If SSL disabled
+    $ mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  # If SSL enabled
     > show dbs
 
 #### 2.3.2 Connect with Username/Password Challenge (SCRAM-SHA-1) authentication
 
     $ vagrant ssh dbnode1
-    $ mongo    **# If SSL disabled**
-    $ mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  **# If SSL enabled**
+    $ mongo    # If SSL disabled
+    $ mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  # If SSL enabled
     > db.getSiblingDB("admin").auth(
         {
              mechanism: "SCRAM-SHA-1",
@@ -128,8 +128,8 @@ The sub-sections below outline the way to connect depending on the type of Mongo
 #### 2.3.4 Connect with LDAP Proxy passing Username/Password authentication
 
     $ vagrant ssh dbnode1
-    $ mongo    **# If SSL disabled**
-    $ mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  **# If SSL enabled**
+    $ mongo    # If SSL disabled
+    $ mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  # If SSL enabled
     > db.getSiblingDB("$external").auth(
         {
              mechanism: "PLAIN",
@@ -143,8 +143,8 @@ The sub-sections below outline the way to connect depending on the type of Mongo
 #### 2.3.5 Connect with Kerberos (GSSAPI) authentication
     $ vagrant ssh dbnode1
     $ sudo -u mongod kinit dbmaster  # Required after running Vagrant 'halt' and then 'up, to obtain a Kerberos ticket again
-    $ sudo -u mongod mongo dbnode1.vagrant.dev:27017   **# If SSL disabled**
-    $ sudo -u mongod mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  **# If SSL enabled**
+    $ sudo -u mongod mongo dbnode1.vagrant.dev:27017   # If SSL disabled
+    $ sudo -u mongod mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  # If SSL enabled
     > db.getSiblingDB("$external").auth(
         {
              mechanism: "GSSAPI",
@@ -155,27 +155,30 @@ The sub-sections below outline the way to connect depending on the type of Mongo
 
 ### 2.4 Investigating the MongoDB Replica Set
 
-* SSH to the host for one of the replicas, eg.:
+SSH to the host for one of the replicas, eg.:
 
     $ vagrant ssh dbnode1
 
-* Each mongod process is running as a service using the generated configuration file, including Security settings, at: /etc/mongod.conf
+Each mongod process is running as a service using the generated configuration file, including Security settings, at: /etc/mongod.conf
 
-* The output log for each mongod process is viewable at /var/log/mongod/mongod.conf - this needs to viewed as the 'mongod' OS user eg.:
+The output log for each mongod process is viewable at /var/log/mongod/mongod.conf - this needs to viewed as the 'mongod' OS user eg.:
 
     $ sudo -u mongod less /var/log/mongodb/mongod.log 
 
-* If FIPS 140-2 is enabled, this output log file should contain an output line saying: "FIPS 140-2 mode activated"
+If FIPS 140-2 is enabled, this output log file should contain an output line saying: "FIPS 140-2 mode activated"
 
 If Kerberos is enabled, the following file has additional environment variables set to specify the location of the Keytab and debug logging files: /etc/sysconfig/mongod
 
 If Kerberos is enabled, the mongod process will log Kerberos debug info at /var/log/mongodb/krbtrace.log - this needs to viewed as the 'mongod' OS user eg.:
+
     $ sudo -u mongod less /var/log/mongodb/krbtrace.log
 
 If Auditing is enabled, the mongod process will log Audit events to: /var/lib/mongo/auditLog.bson - to view these events, run:
+
     $ bsondump /var/lib/mongo/auditLog.bson | less
 
 The database is configured with an admin user and a sample user (see vars/external_vars.yml for the usernames & passwords). To view the different access control settings for these users, start the Mongo Shell (see section 2.3) and then run the command:
+
     // If using Username/Password Challenge (SCRAM-SHA-1) authentication:
     > db.getSiblingDB("admin").runCommand({usersInfo:1})
     // If using Certificate/LDAP/Kerberos authentication:
@@ -184,6 +187,7 @@ The database is configured with an admin user and a sample user (see vars/extern
 The MongoDB database/collection that is populated with sample data is: maindata.records
 
 To see the contents of the sample database collection, start the Mongo Shell (see section 2.3) and run:
+
     > use maindata
     > db.records.find().pretty()
 
@@ -192,10 +196,12 @@ To see the contents of the sample database collection, start the Mongo Shell (se
 The OpenLDAP process (/usr/sbin/slapd) is running as a service on the 'centralit' VM, listening on port 389
 
 To test the LDAP connection from a host running mongod:
+
     $ vagrant ssh dbnode1
     $ testsaslauthd -u jsmith -p Pa55word124 -f /var/run/saslauthd/mux -s ldap
 
 The 'ldapsearch' tool can be used to look at the contents of the LDAP Directory:
+
     $ vagrant ssh centralit
     # Show contents of whole directory (password: "ldapManagerPa55wd123"):
     $ ldapsearch -x -W -H ldap://centralit/ -D "cn=Manager,dc=WizzyIndustries,dc=com" -b "dc=WizzyIndustries,dc=com" "(objectclass=*)"
@@ -211,9 +217,11 @@ The generated configuration file for the Kerberos server is at: /etc/krb5.conf
 The main log file for the KDC is at: /var/log/krb5kdc.log
 
 A keytab of registered principals (just host machines and not users) is generated to the file: /etc/krb5.keytab - this needs to viewed as the 'root' OS user, eg.:
+
     $  sudo klist -k /etc/krb5.keytab
 
 The kadmin.local tool can be used on the host VM to list the principals (registered host machines and registered users), eg.:
+
     $ sudo kadmin.local
     : listprincs
     : quit
@@ -229,9 +237,11 @@ PyKMIP is started as a service using a generated file at: /usr/lib/systemd/syste
 The wrapper script that runs the PyKMIP python application is at: /sbin/pykmip_server.py
 
 The wrapper script uses syslog for the logging output for PyKMIP, therefore PyKMIP events can be viewed using the command:
+
     $ sudo grep 'PyKMIP' /var/log/messages
 
 The status of the PyKMIP service and some of its output events can also be viewed using the systemctl command, eg.:
+
     $ sudo systemctl status -l pykmip
 
 ### 2.8 Investigating the Test Client Python Application
@@ -239,10 +249,12 @@ The status of the PyKMIP service and some of its output events can also be viewe
 A simple Python client, that uses the PyMongo driver to test the secure connection to the remote replica set and query and print out some data from the database/collection maindata.records, is located in the home directory of the default vagrant OS user in the 'client' VM (ie.: /home/vargant/TestSecPyClient.py)
 
 The test client application can be simply run, over and over again, by SSH'ing to the 'client' VM and invoking it directly, eg.:
+
     $ vargant ssh client
     $ ./TestSecPyClient.py
 
 If Kerberos has been configured, and vagrant halt & up have been run to restart the 'client' VM, when SSH'ing to the VM and BEFORE running the test application application, the OS user must be granted a Kerberos ticket again, using the command (password us "Pa55word124"):
+
     $ kinit jsmith
 
 
