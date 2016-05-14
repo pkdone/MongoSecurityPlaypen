@@ -69,15 +69,15 @@ Ensure the following prerequisites are already fulfilled on the host Laptop/PC:
 
 ### 2.2 Stopping, Re-starting and Clearing Out The Environment
 
-* To shutdown/halt the VMs, allowing them to be re-started at a future time, as is, for use offline, run:
+To shutdown/halt the VMs, allowing them to be re-started at a future time, as is, for use offline, run:
 
     $ vagrant halt
 
-* To restart the VMs (inc. the MongoDB, OpenLDAP, Kerberos & PyKMIP processes) after previously halting it, just run (this won’t attempt to recreate the VMs - the VMs will just be started up again):
+To restart the VMs (inc. the MongoDB, OpenLDAP, Kerberos & PyKMIP processes) after previously halting it, just run (this won’t attempt to recreate the VMs - the VMs will just be started up again):
 
     $ vagrant up 
 
-* To completely remove the VMs, ready to start all over again with 'vagrant up', run: 
+To completely remove the VMs, ready to start all over again with 'vagrant up', run: 
 
     $ vagrant destroy -f
 
