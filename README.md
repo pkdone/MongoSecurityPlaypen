@@ -1,7 +1,6 @@
 # MongoSecurityPlaypen
-Copyright (c) 2016 Paul Done
 
-MongoSecurityPlaypen is intended to be used for learning, exploring or demo'ing specific [MongoDB security](https://docs.mongodb.com/manual/security/) features, in a safe sandbox environment. The project uses [VirtualBox](https://www.virtualbox.org/), [Vagrant](https://www.vagrantup.com/) & [Ansible](https://www.ansible.com/) to build and run a demo environment on a Laptop/PC.
+MongoSecurityPlaypen is intended to be used for learning, exploring or demo'ing specific [MongoDB security](https://docs.mongodb.com/manual/security/) features, to be deployed only in a safe sandbox environment. The project uses [VirtualBox](https://www.virtualbox.org/), [Vagrant](https://www.vagrantup.com/) & [Ansible](https://www.ansible.com/) to build and run a demo environment on a Laptop/PC.
 
 **WARNING** *This project is intentionally NOT "production secure" to make it easier for people to explore. For example, no firewalls are configured and passwords are passed around on the command line which can be view-able in OS user history and OS process lists. Other potential security holes are likely to exist. It is strongly suggested that you consult the [MongoDB Security Checklist](https://docs.mongodb.com/manual/administration/security-checklist/).* 
 
@@ -24,7 +23,7 @@ When the project is run on a Laptop/PC, the following local environment is gener
 
 ## 1  How To Run
 
-### 1.1 Pre-Requisites / Dependencies
+### 1.1 Prerequisites / Dependencies
 
 Ensure the following prerequisites are already fulfilled on the host Laptop/PC:
 
@@ -85,10 +84,10 @@ To completely remove the VMs, ready to start all over again with 'vagrant up', r
 
 ### 2.3 Using Mongo Shell to Connect to the Replica Set
 
-The sub-sections below outline the way to connect depending on the type of MongoDB authentication that has been configured.
+Each sub-section below outlines a specific way to connect to the MongoDB cluster, depending on the type of MongoDB authentication that has been configured for the cluster.
 
 **Notes:**
- * For some types of authentication, when connecting via the Mongo Shell, Fully Qualified Domain Names - FQDNs (eg. dbnode1.vagrant.dev), need to be used rather than just hostnames (eg. dbnode1, localhost) or IP addresses (eg. 192.168.14.101, or 127.0.0.1. This is necessary when using Kerberos, Certificates and or TLS.
+ * For some types of authentication, when connecting via the Mongo Shell, Fully Qualified Domain Names - FQDNs (eg. dbnode1.vagrant.dev), need to be used rather than just hostnames (eg. dbnode1, localhost) or IP addresses (eg. 192.168.14.101, or 127.0.0.1. This is necessary when using Kerberos, Certificates and/or TLS.
  * For some types of authentication, when invoking the Mongo Shell, the 'mongo' command has to be run as the 'mongod' OS user because a referenced file (such as a keyfile/certificate or a Kerberos keytab), has been "locked down" to only be visible to the 'mongod' OS user that runs the 'mongod' OS process. Hence the use of 'sudo' in those cases.
 
 #### 2.3.1 Connect with no authentication enabled
@@ -125,7 +124,7 @@ The sub-sections below outline the way to connect depending on the type of Mongo
      );
     > show dbs
 
-#### 2.3.4 Connect with LDAP Proxy passing Username/Password authentication
+#### 2.3.4 Connect with LDAP Proxy authentication
 
     $ vagrant ssh dbnode1
     $ mongo    # If SSL disabled
@@ -218,10 +217,12 @@ The main log file for the KDC is at: /var/log/krb5kdc.log
 
 A keytab of registered principals (just host machines and not users) is generated to the file: /etc/krb5.keytab - this needs to viewed as the 'root' OS user, eg.:
 
-    $  sudo klist -k /etc/krb5.keytab
+    $ vagrant ssh centralit
+    $ sudo klist -k /etc/krb5.keytab
 
 The kadmin.local tool can be used on the host VM to list the principals (registered host machines and registered users), eg.:
 
+    $ vagrant ssh centralit
     $ sudo kadmin.local
     : listprincs
     : quit
@@ -238,19 +239,21 @@ The wrapper script that runs the PyKMIP python application is at: /sbin/pykmip_s
 
 The wrapper script uses syslog for the logging output for PyKMIP, therefore PyKMIP events can be viewed using the command:
 
+    $ vagrant ssh centralit
     $ sudo grep 'PyKMIP' /var/log/messages
 
 The status of the PyKMIP service and some of its output events can also be viewed using the systemctl command, eg.:
 
+    $ vagrant ssh centralit
     $ sudo systemctl status -l pykmip
 
 ### 2.8 Investigating the Test Client Python Application
 
-A simple Python client, that uses the PyMongo driver to test the secure connection to the remote replica set and query and print out some data from the database/collection maindata.records, is located in the home directory of the default vagrant OS user in the 'client' VM (ie.: /home/vargant/TestSecPyClient.py)
+A simple Python client, that uses the PyMongo driver to test the secure connection to the remote replica set and query and print out some data from the database/collection maindata.records, is located in the home directory of the default vagrant OS user in the 'client' VM (ie.: /home/vagrant/TestSecPyClient.py)
 
 The test client application can be simply run, over and over again, by SSH'ing to the 'client' VM and invoking it directly, eg.:
 
-    $ vargant ssh client
+    $ vagrant ssh client
     $ ./TestSecPyClient.py
 
 If Kerberos has been configured, and vagrant halt & up have been run to restart the 'client' VM, when SSH'ing to the VM and BEFORE running the test application application, the OS user must be granted a Kerberos ticket again, using the command (password us "Pa55word124"):
@@ -267,4 +270,7 @@ If Kerberos has been configured, and vagrant halt & up have been run to restart 
 * Configure Open LDAP to use TLS
 * Cache the MongoDB Enterprise yum repository's contents locally ready for quicker re-running of 'vagrant up'
 * For simpler development/debugging of this project, provide ability to just re-run parts of script without running everything
+
+
+Copyright (c) 2016 Paul Done
 
