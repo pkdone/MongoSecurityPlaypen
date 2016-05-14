@@ -7,13 +7,13 @@ MongoSecurityPlaypen is intended to be used for learning, exploring or demo'ing 
 
 The project demonstrates the following MongoDB Security capabilities.
 
-* _Client Authentication_ (SCRAM-SHA-1, Certificate, LDAP or Kerberos)
-* _Internal Authentication_ (Keyfile or Certificate)
-* _Role Based Access Control_
-* _Auditing_
-* _Encryption-over-the-Wire_ (TLS/SSL)
-* _Encryption-at-Rest_ (Keyfile or KMIP)
-* _FIPS 140-2 usage_
+* __Client Authentication__ (SCRAM-SHA-1, Certificate, LDAP or Kerberos)
+* __Internal Authentication__ (Keyfile or Certificate)
+* __Role Based Access Control__
+* __Auditing__
+* __Encryption-over-the-Wire__ (TLS/SSL)
+* __Encryption-at-Rest__ (Keyfile or KMIP)
+* __FIPS 140-2 usage__
 
 When the project is run on a Laptop/PC, the following local environment is generated, in a set of 5 Virtual Machines:
 
@@ -21,7 +21,7 @@ When the project is run on a Laptop/PC, the following local environment is gener
 
 OpenLDAP, MIT's Keberos KDC and the PyKMIP Server are all installed and configured on the 'centralit' VM.
 
-*WARNING* This project is licensed using the open source MIT License (refer to the 'LICENSE' file in the root directory of this project). However, when run, the project will download and install the Enterprise version of MongoDB, supplied by MongoDB Inc., which has a commercial licence. By running the 'vagrant up' command of this MongoSecurityPlaypen project, you will be implicitly accepting the terms and conditions of the MongoDB Enterprise licence enforced by MongoDB Inc.. Please consult MongoDB Inc.'s licence documents directly, for more information.
+**WARNING** This project is licensed using the open source MIT License (refer to the 'LICENSE' file in the root directory of this project). However, when run, the project will download and install the Enterprise version of MongoDB, supplied by MongoDB Inc., which has a commercial licence. By running the 'vagrant up' command of this MongoSecurityPlaypen project, you will be implicitly accepting the terms and conditions of the MongoDB Enterprise licence enforced by MongoDB Inc.. Please consult MongoDB Inc.'s licence documents directly, for more information.
 
 
 ## 1  How To Run
@@ -38,13 +38,13 @@ Ensure the following prerequisites are already fulfilled on the host Laptop/PC:
 
 ### 1.2 Main Environment Generation Steps
 
-* If required, change any values in the text file 'vars/external_vars.yml' to dictate which security features should be turned on and off
-* From the terminal/shell, ensure the current directory is the root directory of this MongoSecurityPlaypen project (ie. the directory containing the file 'Vagrantfile')
-* Run the following command to create and configure the 5-virtual-machine environment outlined in the diagram above - this includes the final step of automatically running the Test Client Python Application and listing the results in the console
+1. If required, change any values in the text file 'vars/external_vars.yml' to dictate which security features should be turned on and off
+2. From the terminal/shell, ensure the current directory is the root directory of this MongoSecurityPlaypen project (ie. the directory containing the file 'Vagrantfile')
+3. Run the following command to create and configure the 5-virtual-machine environment outlined in the diagram above - this includes the final step of automatically running the Test Client Python Application and listing the results in the console
 
 `> vagrant up`
 
-Notes:
+**Notes:**
 * It may take around 10-15 minutes to complete execution, mainly depending on the speed of the host's internet connection.
 * If the internet connection is very slow, the build process may fail with an error due to the CentOS/RedHat package manager (yum) timing out when trying to download binaries.
 * Once completed, the results from the Test Client Python Application will have been displayed towards the end of the Vagrant output text in the console, showing some data queried from the MongoDB replica set.
@@ -78,28 +78,28 @@ Notes:
 * To completely remove the VMs, ready to start all over again with 'vagrant up', run: 
     $ vagrant destroy -f
 
-Note: Halt/Up doesn't currently work when the 'encryptdb_enabled' variable is true, because the PyKMIP Server does not have is for testing purposes only and dies not persisted saved keys to disk (see section 3. Project TODOs, below).
+**Note:** Halt/Up doesn't currently work when the 'encryptdb_enabled' variable is true, because the PyKMIP Server does not have is for testing purposes only and dies not persisted saved keys to disk (see section 3. Project TODOs, below).
 
 ### 2.3 Using Mongo Shell to Connect to the Replica Set
 
 The sub-sections below outline the way to connect depending on the type of MongoDB authentication that has been configured.
 
-Notes:
+**Notes:**
  * For some types of authentication, when connecting via the Mongo Shell, Fully Qualified Domain Names - FQDNs (eg. dbnode1.vagrant.dev), need to be used rather than just hostnames (eg. dbnode1, localhost) or IP addresses (eg. 192.168.14.101, or 127.0.0.1. This is necessary when using Kerberos, Certificates and or TLS.
  * For some types of authentication, when invoking the Mongo Shell, the 'mongo' command has to be run as the 'mongod' OS user because a referenced file (such as a keyfile/certificate or a Kerberos keytab), has been "locked down" to only be visible to the 'mongod' OS user that runs the 'mongod' OS process. Hence the use of 'sudo' in those cases.
 
 #### 2.3.1 Connect with no authentication enabled
 
     $ vagrant ssh dbnode1
-    $ mongo    # If SSL disabled
-    $ mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  # If SSL enabled
+    $ mongo    **# If SSL disabled**
+    $ mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  **# If SSL enabled**
     > show dbs
 
-#### 2.3.2 Authenticate via Username/Password Challenge (SCRAM-SHA-1)
+#### 2.3.2 Connect with Username/Password Challenge (SCRAM-SHA-1) authentication
 
     $ vagrant ssh dbnode1
-    $ mongo    # If SSL disabled
-    $ mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  # If SSL enabled
+    $ mongo    **# If SSL disabled**
+    $ mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  **# If SSL enabled**
     > db.getSiblingDB("admin").auth(
         {
              mechanism: "SCRAM-SHA-1",
@@ -110,7 +110,7 @@ Notes:
       );
     > show dbs
 
-#### 2.3.3 Authenticate via a Certificate
+#### 2.3.3 Connect with Certificate authentication
 
     $ vagrant ssh dbnode1
     $ sudo -u mongod mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem --sslPEMKeyFile /etc/ssl/adminuser_client.pem --sslPEMKeyPassword tlsClientPa55word678
@@ -122,11 +122,11 @@ Notes:
      );
     > show dbs
 
-#### 2.3.4 Authenticate via LDAP Proxy passing Username/Password
+#### 2.3.4 Connect with LDAP Proxy passing Username/Password authentication
 
     $ vagrant ssh dbnode1
-    $ mongo    # If SSL disabled
-    $ mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  # If SSL enabled
+    $ mongo    **# If SSL disabled**
+    $ mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  **# If SSL enabled**
     > db.getSiblingDB("$external").auth(
         {
              mechanism: "PLAIN",
@@ -137,11 +137,11 @@ Notes:
      );
     > show dbs
 
-#### 2.3.5 Authenticate via Kerberos (GSSAPI)
+#### 2.3.5 Connect with Kerberos (GSSAPI) authentication
     $ vagrant ssh dbnode1
     $ sudo -u mongod kinit dbmaster  # Required after running Vagrant 'halt' and then 'up, to obtain a Kerberos ticket again
-    $ sudo -u mongod mongo dbnode1.vagrant.dev:27017   # If SSL disabled
-    $ sudo -u mongod mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  # If SSL enabled
+    $ sudo -u mongod mongo dbnode1.vagrant.dev:27017   **# If SSL disabled**
+    $ sudo -u mongod mongo dbnode1.vagrant.dev:27017 --ssl --sslCAFile /etc/ssl/mongodbca.pem  **# If SSL enabled**
     > db.getSiblingDB("$external").auth(
         {
              mechanism: "GSSAPI",
@@ -152,34 +152,45 @@ Notes:
 
 ### 2.4 Investigating the MongoDB Replica Set
 
-* SSH to the host for one of the replicas, eg.:
+SSH to the host for one of the replicas, eg.:
     $ vagrant ssh dbnode1
-* Each mongod process is running as a service using the generated configuration file, including Security settings, at: /etc/mongod.conf
-* The output log for each mongod process is viewable at /var/log/mongod/mongod.conf - this needs to viewed as the 'mongod' OS user eg.:
+
+Each mongod process is running as a service using the generated configuration file, including Security settings, at: /etc/mongod.conf
+
+The output log for each mongod process is viewable at /var/log/mongod/mongod.conf - this needs to viewed as the 'mongod' OS user eg.:
     $ sudo -u mongod less /var/log/mongodb/mongod.log 
-* If FIPS 140-2 is enabled, this output log file should contain an output line saying: "FIPS 140-2 mode activated"
-* If Kerberos is enabled, the following file has additional environment variables set to specify the location of the Keytab and debug logging files: /etc/sysconfig/mongod
-* If Kerberos is enabled, the mongod process will log Kerberos debug info at /var/log/mongodb/krbtrace.log - this needs to viewed as the 'mongod' OS user eg.:
+
+If FIPS 140-2 is enabled, this output log file should contain an output line saying: "FIPS 140-2 mode activated"
+
+If Kerberos is enabled, the following file has additional environment variables set to specify the location of the Keytab and debug logging files: /etc/sysconfig/mongod
+
+If Kerberos is enabled, the mongod process will log Kerberos debug info at /var/log/mongodb/krbtrace.log - this needs to viewed as the 'mongod' OS user eg.:
     $ sudo -u mongod less /var/log/mongodb/krbtrace.log
-* If Auditing is enabled, the mongod process will log Audit events to: /var/lib/mongo/auditLog.bson - to view these events, run:
+
+If Auditing is enabled, the mongod process will log Audit events to: /var/lib/mongo/auditLog.bson - to view these events, run:
     $ bsondump /var/lib/mongo/auditLog.bson | less
-* The database is configured with an admin user and a sample user (see vars/external_vars.yml for the usernames & passwords). To view the different access control settings for these users, start the Mongo Shell (see section 2.3) and then run the command:
+
+The database is configured with an admin user and a sample user (see vars/external_vars.yml for the usernames & passwords). To view the different access control settings for these users, start the Mongo Shell (see section 2.3) and then run the command:
     // If using Username/Password Challenge (SCRAM-SHA-1) authentication:
     > db.getSiblingDB("admin").runCommand({usersInfo:1})
     // If using Certificate/LDAP/Kerberos authentication:
     > db.getSiblingDB("$external").runCommand({usersInfo:1})
-* The MongoDB database/collection that is populated with sample data is: maindata.records
-* To see the contents of the sample database collection, start the Mongo Shell (see section 2.3) and run:
+
+The MongoDB database/collection that is populated with sample data is: maindata.records
+
+To see the contents of the sample database collection, start the Mongo Shell (see section 2.3) and run:
     > use maindata
     > db.records.find().pretty()
 
 ### 2.5 Investigating the OpenLDAP Server
 
-* The OpenLDAP process (/usr/sbin/slapd) is running as a service on the 'centralit' VM, listening on port 389
-* To test the LDAP connection from a host running mongod:
+The OpenLDAP process (/usr/sbin/slapd) is running as a service on the 'centralit' VM, listening on port 389
+
+To test the LDAP connection from a host running mongod:
     $ vagrant ssh dbnode1
     $ testsaslauthd -u jsmith -p Pa55word124 -f /var/run/saslauthd/mux -s ldap
-* The 'ldapsearch' tool can be used to look at the contents of the LDAP Directory:
+
+The 'ldapsearch' tool can be used to look at the contents of the LDAP Directory:
     $ vagrant ssh centralit
     # Show contents of whole directory (password: "ldapManagerPa55wd123"):
     $ ldapsearch -x -W -H ldap://centralit/ -D "cn=Manager,dc=WizzyIndustries,dc=com" -b "dc=WizzyIndustries,dc=com" "(objectclass=*)"
@@ -188,34 +199,45 @@ Notes:
 
 ### 2.6 Investigating the MIT Kerberos KDC
 
-* The MIT version of a Kerberos Key Distribution Center (KDC) (krb5-server) is running as a service on the 'centralit' VM, listening on port 88
-* The generated configuration file for the Kerberos server is at: /etc/krb5.conf
-* The main log file for the KDC is at: /var/log/krb5kdc.log
-* A keytab of registered principals (just host machines and not users) is generated to the file: /etc/krb5.keytab - this needs to viewed as the 'root' OS user, eg.:
+The MIT version of a Kerberos Key Distribution Center (KDC) (krb5-server) is running as a service on the 'centralit' VM, listening on port 88
+
+The generated configuration file for the Kerberos server is at: /etc/krb5.conf
+
+The main log file for the KDC is at: /var/log/krb5kdc.log
+
+A keytab of registered principals (just host machines and not users) is generated to the file: /etc/krb5.keytab - this needs to viewed as the 'root' OS user, eg.:
     $  sudo klist -k /etc/krb5.keytab
-* The kadmin.local tool can be used on the host VM to list the principals (registered host machines and registered users), eg.:
+
+The kadmin.local tool can be used on the host VM to list the principals (registered host machines and registered users), eg.:
     $ sudo kadmin.local
     : listprincs
     : quit
 
 ### 2.7 Investigating the PyKMIP Server
 
-* PyKMIP (a Python implementation of the Key Management Interoperability Protocol) is a server for maintaining keys & certificates and has been developed for testing and demonstration purposes only. It doesn't persist anything to disk (such as stored keys) and as a result if the host 'centralit' VM is restarted, all stored keys are lost.
-* Version 0.4.0 of PyKMIP is used rather than a later version (e.g. 0.4.1) which appears to have a regression preventing it from working with MongoDB.
-* PyKMIP is started as a service using a generated file at: /usr/lib/systemd/system/pykmip.service
-* The wrapper script that runs the PyKMIP python application is at: /sbin/pykmip_server.py
-* The wrapper script uses syslog for the logging output for PyKMIP, therefore PyKMIP events can be viewed using the command:
+PyKMIP (a Python implementation of the Key Management Interoperability Protocol) is a server for maintaining keys & certificates and has been developed for testing and demonstration purposes only. It doesn't persist anything to disk (such as stored keys) and as a result if the host 'centralit' VM is restarted, all stored keys are lost.
+
+Version 0.4.0 of PyKMIP is used rather than a later version (e.g. 0.4.1) which appears to have a regression preventing it from working with MongoDB.
+
+PyKMIP is started as a service using a generated file at: /usr/lib/systemd/system/pykmip.service
+
+The wrapper script that runs the PyKMIP python application is at: /sbin/pykmip_server.py
+
+The wrapper script uses syslog for the logging output for PyKMIP, therefore PyKMIP events can be viewed using the command:
     $ sudo grep 'PyKMIP' /var/log/messages
-* The status of the PyKMIP service and some of its output events can also be viewed using the systemctl command, eg.:
+
+The status of the PyKMIP service and some of its output events can also be viewed using the systemctl command, eg.:
     $ sudo systemctl status -l pykmip
 
 ### 2.8 Investigating the Test Client Python Application
 
-* A simple Python client, that uses the PyMongo driver to test the secure connection to the remote replica set and query and print out some data from the database/collection maindata.records, is located in the home directory of the default vagrant OS user in the 'client' VM (ie.: /home/vargant/TestSecPyClient.py)
-* The test client application can be simply run, over and over again, by SSH'ing to the 'client' VM and invoking it directly, eg.:
+A simple Python client, that uses the PyMongo driver to test the secure connection to the remote replica set and query and print out some data from the database/collection maindata.records, is located in the home directory of the default vagrant OS user in the 'client' VM (ie.: /home/vargant/TestSecPyClient.py)
+
+The test client application can be simply run, over and over again, by SSH'ing to the 'client' VM and invoking it directly, eg.:
     $ vargant ssh client
     $ ./TestSecPyClient.py
-* If Kerberos has been configured, and vagrant halt & up have been run to restart the 'client' VM, when SSH'ing to the VM and BEFORE running the test application application, the OS user must be granted a Kerberos ticket again, using the command (password us "Pa55word124"):
+
+If Kerberos has been configured, and vagrant halt & up have been run to restart the 'client' VM, when SSH'ing to the VM and BEFORE running the test application application, the OS user must be granted a Kerberos ticket again, using the command (password us "Pa55word124"):
     $ kinit jsmith
 
 
