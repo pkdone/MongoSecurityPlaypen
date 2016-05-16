@@ -23,23 +23,23 @@ When the project is run on a Laptop/PC, the following local environment is gener
 
 ## 1  How To Run
 
-### 1.1 Prerequisites / Dependencies
+### 1.1 Prerequisites
 
-Ensure the following prerequisites are already fulfilled on the host Laptop/PC:
+Ensure the following dependencies are already fulfilled on the host Laptop/PC:
 
 * Host operating system is Mac OS X or Linux
 * [VirtualBox](https://www.virtualbox.org/wiki/Downloads) is already installed on the host machine
 * [Vagrant](https://www.vagrantup.com/downloads.html) is already installed on the host machine
-* Ansible is already installed on the host machine (see OS specific installation guides for [Mac OSX](https://valdhaus.co/writings/ansible-mac-osx/) and the many [Linux](http://docs.ansible.com/ansible/intro_installation.html) variants)
+* Ansible is already installed on the host machine (see OS specific installation guides for [Mac OSX](https://valdhaus.co/writings/ansible-mac-osx/) and the many [Linux](http://docs.ansible.com/ansible/intro_installation.html) variants). _Max OS X Hint_: Run "brew install ansible"
 * Host machine is connected to the internet (for the installation/configuration only - once configured, you can re-start the environment offline)
 
-### 1.2 Main Environment Generation Steps
+### 1.2 Main Steps to Run
 
 1. If required, change any values in the text file 'vars/external_vars.yml' to dictate which security features should be turned on and off
 2. From the terminal/shell, ensure the current directory is the root directory of this MongoSecurityPlaypen project (ie. the directory containing the file 'Vagrantfile')
 3. Run the following command to create and configure the 5-virtual-machine environment outlined in the diagram above - this includes the final step of automatically running the Test Client Python Application and listing the results in the console
 
-`> vagrant up`
+    > vagrant up
 
 **Notes:**
 * It may take around 10-15 minutes to complete execution, mainly depending on the speed of the host's internet connection.
@@ -158,7 +158,9 @@ SSH to the host for one of the replicas, eg.:
 
     $ vagrant ssh dbnode1
 
-Each mongod process is running as a service using the generated configuration file, including Security settings, at: /etc/mongod.conf
+Each mongod process is running as a service using the generated configuration file /etc/mongod.conf, including Security settings - to view, simply run: 
+
+    $ less /etc/mongod.conf
 
 The output log for each mongod process is viewable at /var/log/mongod/mongod.conf - this needs to viewed as the 'mongod' OS user eg.:
 
