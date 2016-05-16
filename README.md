@@ -37,9 +37,9 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
 
 1. If required, change any values in the text file 'vars/external_vars.yml' to dictate which security features should be turned on and off
 2. From the terminal/shell, ensure the current directory is the root directory of this MongoSecurityPlaypen project (ie. the directory containing the file 'Vagrantfile')
-3. Run the following command to create and configure the 5-virtual-machine environment outlined in the diagram above - this includes the final step of automatically running the Test Client Python Application and listing the results in the console
+3. Run the following command to configure the 5-virtual-machine environment outlined in the diagram above - includes final step of automatically running the Test Client Python Application and listing the results in the console
 
-    > vagrant up
+    $ vagrant up
 
 **Notes:**
 * It may take around 10-15 minutes to complete execution, mainly depending on the speed of the host's internet connection.
@@ -52,19 +52,19 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
 ### 2.1 SSH'ing to each of the 5 VMs
 
     # Connect to the VM hosting OpenLDAP, MIT Kerberos KDC and PyKMIP Server
-    > vagrant ssh centralit
+    $ vagrant ssh centralit
 
     # Connect to the VM hosting the 1st MongoDB Database Replica in the Replica-Set
-    > vagrant ssh dbnode1
+    $ vagrant ssh dbnode1
 
     # Connect to the VM hosting the 2nd MongoDB Database Replica in the Replica-Set
-    > vagrant ssh dbnode2
+    $ vagrant ssh dbnode2
 
     # Connect to the VM hosting the 3rd MongoDB Database Replica in the Replica-Set
-    > vagrant ssh dbnode3
+    $ vagrant ssh dbnode3
 
     # Connect to the VM hosting the Test Client Python Application
-    > vagrant ssh client
+    $ vagrant ssh client
 
 ### 2.2 Stopping, Re-starting and Clearing Out The Environment
 
