@@ -37,7 +37,7 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
 
 1. If required, change any values in the text file 'vars/external_vars.yml' to dictate which security features should be turned on and off
 2. From the terminal/shell, ensure the current directory is the root directory of this MongoSecurityPlaypen project (ie. the directory containing the file 'Vagrantfile')
-3. Run the following command to configure the 5-virtual-machine environment outlined in the diagram above - includes final step of automatically running the Test Client Python Application and listing the results in the console
+3. Run the following command to configure the 5-virtual-machine environment outlined in the diagram above - includes final step of automatically running the Test Client Python Application and listing the results in the console:
 
     $ vagrant up
 
