@@ -77,18 +77,20 @@ To restart the VMs (inc. the MongoDB, OpenLDAP, Kerberos & PyKMIP processes) aft
 
     $ vagrant up 
 
+**Note:** Halt/Up doesn't currently work when the 'encryptdb_enabled' variable is true, because the PyKMIP Server is intended for testing purposes only and does not have the capability to persist saved keys to disk (see section 4. Project TODOs, below).
+
 To completely remove the VMs, ready to start all over again with 'vagrant up', run: 
 
     $ vagrant destroy -f
 
-**Note:** Halt/Up doesn't currently work when the 'encryptdb_enabled' variable is true, because the PyKMIP Server does not have is for testing purposes only and dies not persisted saved keys to disk (see section 3. Project TODOs, below).
+**Note:** If a different security configuration is required, by changing the values in the text file __vars/external_vars.yml__, the steps of running 'vagrant destroy -f' and then 'vagrant up' need to be executed, to tear down and then re-create the whole environment again. This project does not have a way of allowing just a few existing environment settings to be re-configured on the fly.
 
 ### 2.3 Using Mongo Shell to Connect to the Replica Set
 
 Each sub-section below outlines a specific way to connect to the MongoDB cluster, depending on the type of MongoDB authentication that has been configured for the cluster.
 
 **Notes:**
- * For some types of authentication, when connecting via the Mongo Shell, Fully Qualified Domain Names - FQDNs (eg. dbnode1.vagrant.dev), need to be used rather than just hostnames (eg. dbnode1, localhost) or IP addresses (eg. 192.168.14.101, or 127.0.0.1. This is necessary when using Kerberos, Certificates and/or TLS.
+ * For some types of authentication, when connecting via the Mongo Shell, Fully Qualified Domain Names - FQDNs (eg. dbnode1.vagrant.dev), need to be used rather than just hostnames (eg. dbnode1, localhost) or IP addresses (eg. 192.168.14.101, or 127.0.0.1). This is necessary when using Kerberos, Certificates and/or TLS.
  * For some types of authentication, when invoking the Mongo Shell, the 'mongo' command has to be run as the 'mongod' OS user because a referenced file (such as a keyfile/certificate or a Kerberos keytab), has been "locked down" to only be visible to the 'mongod' OS user that runs the 'mongod' OS process. Hence the use of 'sudo' in those cases.
 
 #### 2.3.1 Connect with no authentication enabled
@@ -262,8 +264,16 @@ If Kerberos has been configured, and vagrant halt & up have been run to restart 
     $ kinit jsmith
 
 
-## 3  Project TODOs
-* Extend the 'yum' timeout duration, to avoid timeout failurs when running 'vagrant up' with a slow internet connection.
+## 3  Major Software Packages Installed
+* CentOS 7.1
+* MongoDB Enterprise latest version (was version 3.2.6 on 17-May-2016)
+* OpenLDAP (slapd) latest version in CentOS 7.1 Yum Repository (was version 2.4.40 on 17-May-2016)
+* MIT Kerberos KDC (krb5-server) latest version in CentOS 7.1 Yum Repository (was version 1.13.2 on 17-May-2016)
+* PyKMIP version 0.4.0
+
+
+## 4  Project TODOs
+* Extend the 'yum' timeout duration, to avoid timeout failures when running 'vagrant up' with a slow internet connection.
 * PyKMIP has no built-in persistence, so if vagrant halt and then vagrant up have been run, the mongod replicas won't start properly, if encryption is enabled using KMIP
 * Fix when encryptdb-enabled and fips140-2-enabled - can't use generated keys as they use blacklisted algorithms (eg. md5) - may need to use FIPS enabled OpenSSL to generate keys - also when fixed, test if can have TLS false, FIPS true, enc-at-rest true, simultaneously.
 * When generating the keytab on the 'centralit' VM, generate separate keytabs for dbnode1, dbnode2 & dbnode3 for better security isolation
