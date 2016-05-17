@@ -35,9 +35,9 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
 
 ### 1.2 Main Steps to Run
 
-1. If required, change any values in the text file 'vars/external_vars.yml' to dictate which security features should be turned on and off
-2. From the terminal/shell, ensure the current directory is the root directory of this MongoSecurityPlaypen project (ie. the directory containing the file 'Vagrantfile')
-3. Run the following command to configure the 5-virtual-machine environment outlined in the diagram above - includes final step of automatically running the Test Client Python Application and listing the results in the console:
+1. If required, change any values in the text file __vars/external_vars.yml__ to dictate which security features should be turned on and off
+2. From the terminal/shell, ensure the current directory is the __base directory__ of this MongoSecurityPlaypen project (ie. the directory containing the file __Vagrantfile__)
+3. __Run the following command__ to configure the 5-virtual-machine environment outlined in the diagram above - includes final step of automatically running the Test Client Python Application and listing the results in the console:
 
     $ vagrant up
 
@@ -45,6 +45,7 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
 * It may take around 10-15 minutes to complete execution, mainly depending on the speed of the host's internet connection.
 * If the internet connection is very slow, the build process may fail with an error due to the CentOS/RedHat package manager (yum) timing out when trying to download binaries.
 * Once completed, the results from the Test Client Python Application will have been displayed towards the end of the Vagrant output text in the console, showing some data queried from the MongoDB replica set.
+* If the configuration process results in an error, run 'vargant destroy -f' and then try again, as sometimes old environments can get in the way.
 
 
 ## 2  Tips for Exploring & Playing With the Configured Environment
