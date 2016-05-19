@@ -39,13 +39,15 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
 2. From the terminal/shell, ensure the current directory is the __base directory__ of this MongoSecurityPlaypen project (ie. the directory containing the file __Vagrantfile__)
 3. __Run the following command__ to configure the 5-virtual-machine environment outlined in the diagram above - includes final step of automatically running the Test Client Python Application and listing the results in the console:
 
+    $ vagrant destroy -f
     $ vagrant up
 
 **Notes:**
+* May not be necessary to run 'destroy' first, but some users have reported that one of the VMs is not generated when they run 'up', if they don't run 'destroy' first (root cause not yet diagnosed).
 * It may take around 10-15 minutes to complete execution, mainly depending on the speed of the host's internet connection.
 * If the internet connection is very slow, the build process may fail with an error due to the CentOS/RedHat package manager (yum) timing out when trying to download binaries.
 * Once completed, the results from the Test Client Python Application will have been displayed towards the end of the Vagrant output text in the console, showing some data queried from the MongoDB replica set.
-* If the configuration process results in an error, run 'vargant destroy -f' and then try again, as sometimes old environments can get in the way.
+* If the configuration process results in an error, run 'vagrant destroy -f' and then try again, as sometimes old environments can get in the way.
 
 
 ## 2  Tips for Exploring & Playing With the Configured Environment
@@ -273,6 +275,7 @@ If Kerberos has been configured, and vagrant halt & up have been run to restart 
 
 
 ## 4  Project TODOs
+* Some users (Mac only?) reporting that when they run vagrant up for the first time, the creation of 'centralit' is skipped resulting in missing .pem files during configuration of dbnode VMs ('vagrant destroy -f' seems to clear this up). Not yet diagnosed why this is occurring for some users.
 * Extend the 'yum' timeout duration, to avoid timeout failures when running 'vagrant up' with a slow internet connection.
 * PyKMIP has no built-in persistence, so if vagrant halt and then vagrant up have been run, the mongod replicas won't start properly, if encryption is enabled using KMIP
 * Fix when encryptdb-enabled and fips140-2-enabled - can't use generated keys as they use blacklisted algorithms (eg. md5) - may need to use FIPS enabled OpenSSL to generate keys - also when fixed, test if can have TLS false, FIPS true, enc-at-rest true, simultaneously.
