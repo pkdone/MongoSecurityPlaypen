@@ -9,12 +9,12 @@ from pymongo import MongoClient
 ###
 def main():
     print 
-    print "--STARTED: Secure test client python script-- "
+    print "--STARTED: Secure test client python script"
     print 
 
     try: 
         connectionURL = getConnectionURL()
-        print "  ====Connecting to MongoDB URL: %s ====" % connectionURL
+        print "--MONGODB CONNECTION URL:  %s" % connectionURL
         print 
 
         # If using cert authenticaiton, problem passing "cert required" param in URL, so passing explicitly here
@@ -32,7 +32,7 @@ def main():
         print "  Unexpected error: %s  " % sys.exc_info()[1]
 
     print 
-    print "--FINISHED: Secure test client python script-- "
+    print "--FINISHED: Secure test client python script"
     print
 
 

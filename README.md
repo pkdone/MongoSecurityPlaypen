@@ -30,7 +30,7 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
 * Host operating system is Mac OS X or Linux
 * [VirtualBox](https://www.virtualbox.org/wiki/Downloads) is already installed on the host machine
 * [Vagrant](https://www.vagrantup.com/downloads.html) is already installed on the host machine
-* Ansible is already installed on the host machine (see OS specific installation guides for [Mac OSX](https://valdhaus.co/writings/ansible-mac-osx/) and the many [Linux](http://docs.ansible.com/ansible/intro_installation.html) variants). _Max OS X Hint_: Run "brew install ansible"
+* Ansible is already installed on the host machine (see OS specific installation guides for [Mac OSX](https://valdhaus.co/writings/ansible-mac-osx/) and the many [Linux](http://docs.ansible.com/ansible/intro_installation.html) variants). _Max OS X Hint_: Run "brew install ansible" but if that fails try the "pip" method described in the link
 * Host machine is connected to the internet (for the installation/configuration only - once configured, you can re-start the environment offline)
 
 ### 1.2 Main Steps to Run
@@ -279,7 +279,7 @@ If Kerberos has been configured, and vagrant halt & up have been run to restart 
 ## 4  Project TODOs
 * Some users (Mac only?) reporting that when they run vagrant up for the first time, the creation of 'centralit' is skipped resulting in missing .pem files during configuration of dbnode VMs ('vagrant destroy -f' seems to clear this up). Not yet diagnosed why this is occurring for some users.
 * Extend the 'yum' timeout duration, to avoid timeout failures when running 'vagrant up' with a slow internet connection.
-* PyKMIP has no built-in persistence, so if vagrant halt and then vagrant up have been run, the mongod replicas won't start properly, if encryption is enabled using KMIP
+* PyKMIP has no built-in persistence, so if vagrant halt and then vagrant up have been run, the mongod replicas won't start properly, if encryption is enabled using KMIP. As a result, vars/external_vars.yml has been changed to use keyfile by default, for encryption-at-rest, to reduce the number of people that hit this issue.
 * Fix when encryptdb-enabled and fips140-2-enabled - can't use generated keys as they use blacklisted algorithms (eg. md5) - may need to use FIPS enabled OpenSSL to generate keys - also when fixed, test if can have TLS false, FIPS true, enc-at-rest true, simultaneously.
 * When generating the keytab on the 'centralit' VM, generate separate keytabs for dbnode1, dbnode2 & dbnode3 for better security isolation
 * Use more elegant way of waiting for primary to be ready, rather than pausing for 30 seconds and then hoping it is ready
@@ -288,5 +288,4 @@ If Kerberos has been configured, and vagrant halt & up have been run to restart 
 * For simpler development/debugging of this project, provide ability to just re-run parts of script without running everything
 
 
-Copyright (c) 2016 Paul Done
 
