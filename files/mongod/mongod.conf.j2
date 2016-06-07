@@ -13,6 +13,7 @@ auditLog:
    destination: file
    format: BSON
    path: /var/lib/mongo/auditLog.bson
+   filter: '{atype: "authCheck", "param.command": {$in: ["find", "insert"]}}'
 {% endif %}
 
 systemLog:

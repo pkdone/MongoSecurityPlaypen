@@ -181,9 +181,11 @@ If Kerberos is enabled, the mongod process will log Kerberos debug info at /var/
 
     $ sudo -u mongod less /var/log/mongodb/krbtrace.log
 
-If Auditing is enabled, the mongod process will log Audit events to: /var/lib/mongo/auditLog.bson - to view these events, run:
+If Auditing is enabled, the mongod process will log Audit events in a BSON format to: /var/lib/mongo/auditLog.bson - to view these events, run:
 
     $ bsondump /var/lib/mongo/auditLog.bson | less
+
+The Auditing parameters, specified in /var/log/mongod/mongod.conf, are configured to just audit "insert" and "find" operations, and to filter out all other types of events, such as replica-set configuration actions, user creation actions, etc.. In the mongod.conf file, look for the "auditLog:" section of the file, plus the "auditAuthorizationSuccess" parameter at the end of the file, to understand how Auditing has been configured.
 
 The database is configured with an admin user and a sample user (see vars/external_vars.yml for the usernames & passwords). To view the different access control settings for these users, start the Mongo Shell (see section 2.3) and then run the command:
 
