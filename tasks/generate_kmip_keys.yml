@@ -3,8 +3,13 @@
 # Generate CA, server & server key/cert files for use with KMIP
 # 
 
+- name: Set FIPS env variable for running OpenSSL
+  include: tasks/set_openssl_fips_var.yml
+
 - name: One time create the private key for the root CA and then self-sign the root CA's certificate
   shell: /usr/bin/openssl {{ item }}
+  environment:
+    OPENSSL_FIPS: "{{ fips_flag }}"
   with_items:
     - genrsa -aes256 -passout pass:{{ kmip_ca_key_passwd }} -out /vagrant/tmp/kmiprootCA.key 2048
     - req -x509 -new -nodes -key /vagrant/tmp/kmiprootCA.key -passin pass:{{ kmip_ca_key_passwd }} -newkey rsa:2048 -days 1024 -out /vagrant/tmp/kmiprootCA.pem -subj "{{ server_dn_prefix }}TestKMIPCA"
@@ -14,6 +19,8 @@
 
 - name: Create private key for server, create a certificate signing request for it and sign the CSR using the CA root key
   shell: /usr/bin/openssl {{ item }}
+  environment:
+    OPENSSL_FIPS: "{{ fips_flag }}"
   with_items:
     - genrsa -out /etc/ssl/kmipserver.key 2048
     - req -new -key /etc/ssl/kmipserver.key -out /etc/ssl/kmipserver.csr -subj "{{ server_dn_prefix }}centralit"
@@ -28,6 +35,8 @@
 
 - name: Create private key for client, create a certificate signing request for it and sign the CSR using the CA root key
   shell: /usr/bin/openssl {{ item }}
+  environment:
+    OPENSSL_FIPS: "{{ fips_flag }}"
   with_items:
     - genrsa -aes256 -passout pass:{{ kmip_client_key_passwd }} -out /vagrant/tmp/kmipclient.key 2048
     - req -new -key /vagrant/tmp/kmipclient.key -passin pass:{{ kmip_client_key_passwd }} -out /vagrant/tmp/kmipclient.csr -subj "{{ server_dn_prefix }}TestKMIPClient"

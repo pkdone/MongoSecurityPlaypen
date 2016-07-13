@@ -35,7 +35,7 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
 
 ### 1.2 Main Steps to Run
 
-1. If required, change any values in the text file __vars/external_vars.yml__ to dictate which security features should be turned on and off
+1. If required, change any values in the text file __vars/external_vars.yml__ to define which security features should be turned on and off
 2. From the terminal/shell, ensure the current directory is the __base directory__ of this MongoSecurityPlaypen project (ie. the directory containing the file __Vagrantfile__)
 3. __Run the following commands__ to configure the 5-virtual-machine environment outlined in the diagram above - includes final step of automatically running the Test Client Python Application and listing the results in the console:
 
@@ -113,7 +113,7 @@ Each sub-section below outlines a specific way to connect to the MongoDB cluster
         {
              mechanism: "SCRAM-SHA-1",
              user: "dbmaster",
-             pwd:  "adminpasswd123",
+             pwd:  "adminPa55wd123",
              digestPassword: true
         }
       );
@@ -140,7 +140,7 @@ Each sub-section below outlines a specific way to connect to the MongoDB cluster
         {
              mechanism: "PLAIN",
              user: "dbmaster",
-             pwd:  "adminpasswd123",
+             pwd:  "adminPa55wd123",
              digestPassword: false
         }
      );
@@ -265,29 +265,25 @@ The test client application can be simply run, over and over again, by SSH'ing t
     $ vagrant ssh client
     $ ./TestSecPyClient.py
 
-If Kerberos has been configured, and vagrant halt & up have been run to restart the 'client' VM, when SSH'ing to the VM and BEFORE running the test application application, the OS user must be granted a Kerberos ticket again, using the command (password us "Pa55word124"):
+If Kerberos has been configured, and vagrant halt & up have been run to restart the 'client' VM, when SSH'ing to the VM and BEFORE running the test application application, the OS user must be granted a Kerberos ticket again, using the command (password is "Pa55word124"):
 
     $ kinit jsmith
 
 
 ## 3  Major Software Packages Installed
 * CentOS 7.1
-* MongoDB Enterprise latest version (was version 3.2.6 on 17-May-2016)
-* OpenLDAP (slapd) latest version in CentOS 7.1 Yum Repository (was version 2.4.40 on 17-May-2016)
-* MIT Kerberos KDC (krb5-server) latest version in CentOS 7.1 Yum Repository (was version 1.13.2 on 17-May-2016)
+* MongoDB Enterprise latest version (was version 3.2.7 on 12-Jul-2016)
+* OpenLDAP (slapd) latest version in CentOS 7.1 Yum Repository (was version 2.4.40 on 12-Jul-2016)
+* MIT Kerberos KDC (krb5-server) latest version in CentOS 7.1 Yum Repository (was version 1.13.2 on 12-Jul-2016)
 * PyKMIP version 0.4.0
 
 
 ## 4  Project TODOs
 * Some users (Mac only?) reporting that when they run vagrant up for the first time, the creation of 'centralit' is skipped resulting in missing .pem files during configuration of dbnode VMs ('vagrant destroy -f' seems to clear this up). Not yet diagnosed why this is occurring for some users.
-* Extend the 'yum' timeout duration, to avoid timeout failures when running 'vagrant up' with a slow internet connection.
 * PyKMIP has no built-in persistence, so if vagrant halt and then vagrant up have been run, the mongod replicas won't start properly, if encryption is enabled using KMIP. As a result, vars/external_vars.yml has been changed to use keyfile by default, for encryption-at-rest, to reduce the number of people that hit this issue.
-* Fix when encryptdb-enabled and fips140-2-enabled - can't use generated keys as they use blacklisted algorithms (eg. md5) - may need to use FIPS enabled OpenSSL to generate keys - also when fixed, test if can have TLS false, FIPS true, enc-at-rest true, simultaneously.
 * When generating the keytab on the 'centralit' VM, generate separate keytabs for dbnode1, dbnode2 & dbnode3 for better security isolation
-* Use more elegant way of waiting for primary to be ready, rather than pausing for 30 seconds and then hoping it is ready
 * Configure Open LDAP to use TLS
+* Use more elegant way of waiting for replica-set primary to be ready, rather than pausing for 30 seconds and then hoping it is ready
+* Extend the 'yum' timeout duration, to avoid timeout failures when running 'vagrant up' with a slow internet connection.
 * Cache the MongoDB Enterprise yum repository's contents locally ready for quicker re-running of 'vagrant up'
-* For simpler development/debugging of this project, provide ability to just re-run parts of script without running everything
-
-
 

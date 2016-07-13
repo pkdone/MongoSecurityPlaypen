@@ -16,6 +16,3 @@
 - fail: msg="Invalid settings - if client_auth_method is set to 'cert' then ssl_enabled must be set to true, in external_vars.yml."
   when: client_auth_method == 'cert' and ssl_enabled == false
 
-- fail: msg="Invalid settings - currently not supported to have the combination of encryptdb_enabled and fips140_2_enabled as true, in external_vars.yml."
-  when: encryptdb_enabled and fips140_2_enabled
-

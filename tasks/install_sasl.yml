@@ -8,3 +8,4 @@
 - lineinfile: dest=/etc/sysconfig/saslauthd regexp='^MECH=.*' line='MECH=ldap'
 - template: src=files/sasl/saslauthd.conf.j2 dest=/etc/saslauthd.conf
 - service: name=saslauthd enabled=yes state=started
+

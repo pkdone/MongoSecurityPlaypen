@@ -7,4 +7,3 @@
 - set_fact: client_dn_prefix='/C={{ org_country }}/ST={{ org_location }}/L={{ org_location }}/O={{ org_name }}/OU={{ org_business_dept }}/CN='
 - set_fact: client_dn_suffix=',OU={{ org_business_dept }},O={{ org_name }},L={{ org_location }},ST={{ org_location }},C={{ org_country }}'
 
-

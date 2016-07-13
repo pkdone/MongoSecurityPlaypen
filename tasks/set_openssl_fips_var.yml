@@ -1,0 +1,13 @@
+---
+#
+# Set the FIPS enabled/disabled env var for running OpenSSL 
+#
+
+- name: Set FIPS enabled for OpenSSL
+  set_fact: fips_flag=1
+  when: fips140_2_enabled
+
+- name: Set FIPS disabled for OpenSSL
+  set_fact: fips_flag=0
+  when: not fips140_2_enabled
+

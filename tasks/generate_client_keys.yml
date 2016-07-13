@@ -3,8 +3,13 @@
 # Generate TLS/SSL client key/cert files for encryption over the wire for various users
 # 
 
+- name: Set FIPS env variable for running OpenSSL
+  include: tasks/set_openssl_fips_var.yml
+
 - name: Create private key for ADMIN USER, creating a certificate signing request and signing the CSR using the CA root key
   shell: /usr/bin/openssl {{ item }}
+  environment:
+    OPENSSL_FIPS: "{{ fips_flag }}"
   with_items:
     - genrsa -aes256 -passout pass:{{ tls_client_key_passwd }} -out /vagrant/tmp/adminuser_client.key 2048
     - req -new -key /vagrant/tmp/adminuser_client.key -passin pass:{{ tls_client_key_passwd }} -out /vagrant/tmp/adminuser_client.csr -subj "{{ client_dn_prefix }}{{ db_adminuser_name  }}"
@@ -12,6 +17,8 @@
 
 - name: Create private key for SAMPLE USER, creating a certificate signing request and signing the CSR using the CA root key
   shell: /usr/bin/openssl {{ item }}
+  environment:
+    OPENSSL_FIPS: "{{ fips_flag }}"
   with_items:
     - genrsa -out /vagrant/tmp/sampleuser_client.key 2048
     - req -new -key /vagrant/tmp/sampleuser_client.key -out /vagrant/tmp/sampleuser_client.csr -subj "{{ client_dn_prefix }}{{ db_sampleuser_name }}"

@@ -1,6 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# Main Vagrant Configuration for MongoSecurityPlaypen
 Vagrant.configure(2) do |config|
     # Install Centos 7.1
     config.vm.box = "bento/centos-7.1"
@@ -40,6 +41,7 @@ Vagrant.configure(2) do |config|
                 ansible.playbook = "dbnode.yml"
             end
 
+            # Configure replica-set via mongod on 1st node
             if i == N
                 server.vm.provision :ansible do |ansible|
                     ansible.playbook = "replicaset.yml"

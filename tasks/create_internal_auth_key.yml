@@ -3,8 +3,13 @@
 # Generate internal authentication keyfile
 # 
 
+- name: Set FIPS env variable for running OpenSSL
+  include: tasks/set_openssl_fips_var.yml
+
 - name: Generate shared key file to be used for internal authentication between nodes in the replica set
   shell: /usr/bin/openssl rand -base64 741 > /vagrant/tmp/internal-auth-mongodb-keyfile
+  environment:
+    OPENSSL_FIPS: "{{ fips_flag }}"
   when: ansible_hostname == "dbnode3"
 - copy: src=tmp/internal-auth-mongodb-keyfile dest=/etc/security/internal-auth-mongodb-keyfile owner=mongod group=mongod mode=0600
 - file: path=/vagrant/tmp/internal-auth-mongodb-keyfile state=absent

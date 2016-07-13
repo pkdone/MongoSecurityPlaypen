@@ -27,4 +27,3 @@
   become_method: sudo
   when: client_auth_method == 'kerberos'
 
-

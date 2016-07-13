@@ -3,6 +3,9 @@
 # Configure KMIP client key/cert/ca or internal key file depending on whether encryption-at-rest will use KMIP or note
 # 
 
+- name: Set FIPS env variable for running OpenSSL
+  include: tasks/set_openssl_fips_var.yml
+
 - name: Copy KMIP CA and client cert/key over to host, restricting permissions, and deleting once last node done
   copy: src=tmp/{{item}} dest=/etc/ssl/{{item}} owner=mongod group=mongod mode=0400
   with_items:
@@ -17,10 +20,11 @@
 
 - name: Generate local key file to be used for encryption at rest (for cases when not using a KMIP Server for key management)
   shell: /usr/bin/openssl rand -base64 32 > /vagrant/tmp/encryption-mongodb-keyfile
+  environment:
+    OPENSSL_FIPS: "{{ fips_flag }}"
   when: ansible_hostname == "dbnode3" and encryptdb_key_loc == 'keyfile'
 - copy: src=tmp/encryption-mongodb-keyfile dest=/etc/security/encryption-mongodb-keyfile owner=mongod group=mongod mode=0600
   when: encryptdb_key_loc == 'keyfile'
 - file: path=/vagrant/tmp/encryption-mongodb-keyfile state=absent
   when: ansible_hostname == "dbnode1" and encryptdb_key_loc == 'keyfile'
-
 

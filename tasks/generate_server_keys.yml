@@ -3,8 +3,13 @@
 # Generate TLS/SSL CA & server key/cert files for encryption over the wire
 # 
 
+- name: Set FIPS env variable for running OpenSSL
+  include: tasks/set_openssl_fips_var.yml
+
 - name: One time create the private key for the root CA and then self-sign the root CA's certificate
   shell: /usr/bin/openssl {{ item }}
+  environment:
+    OPENSSL_FIPS: "{{ fips_flag }}"
   with_items:
     - genrsa -aes256 -passout pass:{{ tls_ca_key_passwd }} -out /vagrant/tmp/mongodbca.key 2048
     - req -x509 -new -nodes -key /vagrant/tmp/mongodbca.key -passin pass:{{ tls_ca_key_passwd }} -newkey rsa:2048 -days 1024 -out /vagrant/tmp/mongodbca.pem -subj "{{ server_dn_prefix }}TestTLSCA"
@@ -19,6 +24,8 @@
 
 - name: Create private key for server, create a certificate signing request for it and sign the CSR using the CA root key
   shell: /usr/bin/openssl {{ item }}
+  environment:
+    OPENSSL_FIPS: "{{ fips_flag }}"
   with_items:
     - genrsa -out /etc/ssl/mongodb.key 2048
     - req -new -key /etc/ssl/mongodb.key -out /etc/ssl/mongodb.csr -subj "{{ server_dn_prefix }}{{ ansible_hostname }}.vagrant.dev"

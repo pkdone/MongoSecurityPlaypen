@@ -24,8 +24,10 @@ systemLog:
 
 net:
    port: 27017
-{% if ssl_enabled %}
+{% if ssl_enabled or fips140_2_enabled %}
    ssl:
+{% endif %}
+{% if ssl_enabled %}
       mode: requireSSL
       PEMKeyFile: /etc/ssl/mongodb.pem
       CAFile: /etc/ssl/mongodbca.pem
@@ -33,7 +35,7 @@ net:
 {% if ssl_enabled and client_auth_method != 'cert' %}
       allowConnectionsWithoutCertificates: true
 {% endif %}
-{% if ssl_enabled and fips140_2_enabled %}
+{% if fips140_2_enabled %}
       FIPSMode: true
 {% endif %}
 
