@@ -6,24 +6,31 @@ o: {{ org_name }} {{ org_type }}
 dc: {{ org_name }}
 
 dn: cn=Manager,dc={{ org_name }},dc={{ org_type }}
+objectClass: top
 objectClass: organizationalRole
 cn: Manager
 description: Directory Manager
 
 dn: ou=Users,dc={{ org_name }},dc={{ org_type }}
+objectClass: top
 objectClass: organizationalUnit
 ou: Users
 
 dn: ou=Groups,dc={{ org_name }},dc={{ org_type }}
+objectClass: top
 objectClass: organizationalUnit
 ou: Groups
 
 dn: ou=DataUsers,ou=Groups,dc={{ org_name }},dc={{ org_type }}
+objectclass: top
 objectclass: organizationalunit
 ou: DataUsers
 
 dn: cn={{ db_adminuser_name }},ou=Users,dc={{ org_name }},dc={{ org_type }}
+objectclass: top
 objectclass: inetOrgPerson
+objectclass: person
+objectclass: organizationalPerson
 cn: {{ db_adminuser_name }}
 sn: {{ db_adminuser_name }}
 uid: {{ db_adminuser_name }}
@@ -31,7 +38,10 @@ userpassword: {{ adminuserpasswd_hash }}
 ou: DataUsers
 
 dn: cn={{ db_sampleuser_name }},ou=Users,dc={{ org_name }},dc={{ org_type }}
+objectclass: top
 objectclass: inetOrgPerson
+objectclass: person
+objectclass: organizationalPerson
 cn: {{ db_sampleuser_name }}
 sn: {{ db_sampleuser_name }}
 uid: {{ db_sampleuser_name }}
