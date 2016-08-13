@@ -3,9 +3,10 @@
 # Install MongoDB database ensuring Huge Pages is disabled
 # 
 
-- name: Configure a script to disable huge pages
+- name: Configure a script to disable huge pages and install NUMA control (which will be run by the mongod startup script)
   copy: src=os/disable-transparent-hugepages.j2 dest=/etc/init.d/disable-transparent-hugepages mode=a+x
 - service: name=disable-transparent-hugepages enabled=yes state=started
+- yum: name=numactl state=latest
 
 - name: Install and configure MongoDB from the enterprise binaries repository
   template: src=files/mongod/mongodb-enterprise.repo.j2 dest=/etc/yum.repos.d/mongodb-enterprise.repo
