@@ -272,7 +272,7 @@ If Kerberos has been configured, and vagrant halt & up have been run to restart 
 
 ## 3  Major Software Packages Installed
 * CentOS 7.1
-* MongoDB Enterprise latest version (was version 3.2.7 on 12-Jul-2016)
+* MongoDB Enterprise latest stable 3.2.x version (was version 3.2.8 on 15-Aug-2016)
 * OpenLDAP (slapd) latest version in CentOS 7.1 Yum Repository (was version 2.4.40 on 12-Jul-2016)
 * MIT Kerberos KDC (krb5-server) latest version in CentOS 7.1 Yum Repository (was version 1.13.2 on 12-Jul-2016)
 * PyKMIP version 0.4.0
