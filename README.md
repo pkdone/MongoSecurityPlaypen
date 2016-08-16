@@ -6,12 +6,12 @@ MongoSecurityPlaypen is intended to be used for learning, exploring or demo'ing 
 
 The project demonstrates the following MongoDB Security capabilities.
 
-* __Client Authentication__ (SCRAM-SHA-1, Certificate, LDAP \[Proxy & Direct\] & Kerberos)
-* __Internal Authentication__ (Keyfile & Certificate)
-* __Role Based Access Control__ (Internal DB and External LDAP role memberships)
+* __Client Authentication__ - SCRAM-SHA-1, Certificate, LDAP (Proxy & Direct) & Kerberos
+* __Internal Authentication__ - Keyfile & Certificate
+* __Role Based Access Control__ - Internal DB and External LDAP role memberships
 * __Auditing__
-* __Encryption-over-the-Wire__ (TLS/SSL)
-* __Encryption-at-Rest__ (Keyfile & KMIP)
+* __Encryption-over-the-Wire__ -TLS/SSL
+* __Encryption-at-Rest__ - Keyfile & KMIP
 * __FIPS 140-2 usage__
 
 When the project is run on a Laptop/PC, the following local environment is generated, in a set of 5 Virtual Machines:
