@@ -6,7 +6,7 @@ MongoSecurityPlaypen is intended to be used for learning, exploring or demo'ing 
 
 The project demonstrates the following MongoDB Security capabilities.
 
-* __Client Authentication__ (SCRAM-SHA-1, Certificate, LDAP \[proxy & direct\] & Kerberos)
+* __Client Authentication__ (SCRAM-SHA-1, Certificate, LDAP \[Proxy & Direct\] & Kerberos)
 * __Internal Authentication__ (Keyfile & Certificate)
 * __Role Based Access Control__ (Internal DB and External LDAP role memberships)
 * __Auditing__
@@ -205,7 +205,7 @@ The MongoDB database/collection that is populated with sample data is: 'maindata
 
 The OpenLDAP process (/usr/sbin/slapd) is running as a service on the 'centralit' VM, listening on port 389.
 
-The LDAP server is populated with the following users and groups via the files/openldap/basedomain.ldif.j2:
+The LDAP server is populated with the following users and groups via the project file "files/openldap/basedomain.ldif.j2":
 * User : cn=dbmaster,ou=Users,dc=WizzyIndustries,dc=com
 * User : cn=jsmith,ou=Users,dc=WizzyIndustries,dc=com
 * Group: cn=DBAdmin,ou=Groups,dc=WizzyIndustries,dc=com
@@ -215,12 +215,12 @@ One of two mechanisms may be being used to allow mongod to query the LDAP server
 * LDAP Proxy: Each mongod is configured to use a Simple Authentication and Security Layer (SASL) unix process running on the same machine. It is the SASL process that is configured (in "/etc/saslauthd.conf") with the connection details of the remote LDAP server. The mongod process is configured to use the LDAP Proxy mechanism via the parameter "setParameter.saslauthdPath" in "/etc/mongod.conf".
 * LDAP Direct: A new feature in in MongoDB 3.4. Each mongod is configured to connect directly to the remote LDAP server via its own native LDAP libaries. The mongod process is configured to use the LDAP Direct mechanism via parameters hanging off "security.ldap" in "/etc/mongod.conf".
 
-If LDAP Direct is configured, new in MongoDB 3.4 is also the option to delegate access control role memberships to external groups defined in the LDAP server. If this is configured (via the "role_membership" parameter in "external_vars.yml), the roles defined for the MongoDB cluster are mapped to the two LDAP groups listed earlier in this document section.
-
 If using LDAP Proxy based authentication, each database host VM will be running the SASL process, which the local mongod instance will connect to. In this configuration, the LDAP connection can be tested directly from from the host running mongod:
 
     $ vagrant ssh dbnode1
     $ testsaslauthd -u jsmith -p Pa55word124 -f /var/run/saslauthd/mux -s ldap
+
+If using LDAP Direct based authentication (a new feature in MongoDB 3.4), there is also the option to delegate access control role memberships to external groups defined in the LDAP server. If this is configured (via the "role_membership" parameter in "external_vars.yml), the roles defined for the MongoDB cluster are mapped to the two LDAP groups listed earlier in this document section.
 
 Regardless of whether Proxy or Direct LDAP integration is being used, the 'ldapsearch' tool can be used to look at the contents of the LDAP Directory:
 
