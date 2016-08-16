@@ -17,7 +17,7 @@
 
     - name: Install and configure SASL
       include: tasks/install_sasl.yml
-      when: client_auth_method == "ldap"
+      when: client_auth_method == "ldap" and ldap_integration == "proxy"
 
     - name: Install MongoDB ensuring HugePages is disabled
       include: tasks/install_mongod.yml

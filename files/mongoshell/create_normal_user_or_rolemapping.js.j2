@@ -22,8 +22,26 @@ db.getSiblingDB("$external").createUser(
       roles: [ { role: "read", db: "maindata" } ]
     }
  );
+{% elif client_auth_method == 'ldap' and ldap_integration == 'direct' and role_membership == 'external' %}
+// Creating external authentication reference for LDAP user access with external LDAP group/role mappings
+// (if using native LDAP integration with external authorization, need to authenticate and then create role names that match external LDAP groups)
+db.getSiblingDB("$external").auth(
+    {
+         mechanism: "PLAIN",
+         user: "{{ db_adminuser_name }}",
+         pwd:  "{{ db_adminuser_password }}",
+         digestPassword: false
+    }
+ );
+db.getSiblingDB("admin").createRole(
+    { 
+        role: "cn=AppReadOnly,ou=Groups,dc=WizzyIndustries,dc=com", 
+        privileges: [], 
+        roles: [ { role: "read", db: "maindata" } ]
+    }
+); 
 {% elif client_auth_method == 'ldap' %}
-// Creating external authentication reference for LDAP user access
+// Creating external authentication reference for LDAP proxy or direct user access, and role mappings managed internally
 db.getSiblingDB("$external").createUser(
     {
       user : "{{ db_sampleuser_name }}",
@@ -39,7 +57,7 @@ db.getSiblingDB("$external").createUser(
     }
  );
 {% else %}
-// Nothing to do as authentication is not enabled in MongoDB
+// Nothing to do as authentication is not enabled in MongoDB (or using external LDAP role to group mappings)
 {% endif %}
 
 

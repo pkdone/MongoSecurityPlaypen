@@ -1,6 +1,6 @@
 //
-// Mongo Shell script to create or referenece (if LDAP/Kerberos) a database
-// administrator
+// Mongo Shell script to create or reference (if LDAP/Kerberos) a database
+// administrator (also mapping roles to LDAP group names if using LDAP authz)
 //
 
 {% if client_auth_method == 'userpwd' %}
@@ -20,8 +20,26 @@ db.getSiblingDB("$external").createUser(
       roles: [ { role: "root", db: "admin" } ]
     }
  );
+{% elif client_auth_method == 'ldap' and ldap_integration == 'direct' and role_membership == 'external' %}
+// Creating external authentication reference for LDAP user access with external LDAP group/role mappings
+// (if using native LDAP integration with external authorization, need to authenticate and then create role names that match external LDAP groups)
+db.getSiblingDB("$external").auth(
+    {
+         mechanism: "PLAIN",
+         user: "{{ db_adminuser_name }}",
+         pwd:  "{{ db_adminuser_password }}",
+         digestPassword: false
+    }
+ );
+db.getSiblingDB("admin").createRole(
+    { 
+        role: "cn=DBAdmin,ou=Groups,dc=WizzyIndustries,dc=com", 
+        privileges: [], 
+        roles: ["root"] 
+    }
+); 
 {% elif client_auth_method == 'ldap' %}
-// Creating external authentication reference for LDAP user access
+// Creating external authentication reference for LDAP proxy or direct user access, and role mappings managed internally
 db.getSiblingDB("$external").createUser(
     {
       user : "{{ db_adminuser_name }}",

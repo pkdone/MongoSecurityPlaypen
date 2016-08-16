@@ -52,6 +52,23 @@ security:
 {% if internal_auth_method == 'keyfile' %}
    keyFile: "/etc/security/internal-auth-mongodb-keyfile"
 {% endif %}
+{% if client_auth_method == 'ldap' and ldap_integration == 'direct' %}
+   ldap:
+        # TODO: remove ldap: from url for 3.3.11
+        servers: "ldap://centralit.vagrant.dev"
+        # TODO: add new ldapTransportSecurity = none property for 3.3.11
+        # Translate username to full LDAP DN before looking up in LDAP
+        userToDNMapping: '[ 
+                {match: "(.+)", substitution: "cn={0},ou=Users,dc=WizzyIndustries,dc=com"} 
+        ]' 
+
+        bind: 
+            method: "simple"
+{% endif %}
+{% if client_auth_method == 'ldap' and ldap_integration == 'direct' and role_membership == 'external' %}
+        authz:
+            queryTemplate: "ou=Groups,dc={{ org_name }},dc={{ org_type }}??sub?(&(objectClass=groupOfNames)(member={USER}))"
+{% endif %}
 {% if encryptdb_enabled %}
    enableEncryption: true
    encryptionCipherMode: "AES256-CBC"
@@ -70,7 +87,7 @@ security:
 {% if client_auth_method != 'none' or auditing_enabled%}
 setParameter:
 {% endif %}
-{% if client_auth_method == 'ldap' %}
+{% if client_auth_method == 'ldap' and ldap_integration == 'proxy' %}
    saslauthdPath: "/var/run/saslauthd/mux"
 {% endif %}
 {% if client_auth_method != 'none' %}

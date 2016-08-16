@@ -6,12 +6,12 @@ MongoSecurityPlaypen is intended to be used for learning, exploring or demo'ing 
 
 The project demonstrates the following MongoDB Security capabilities.
 
-* __Client Authentication__ (SCRAM-SHA-1, Certificate, LDAP or Kerberos)
-* __Internal Authentication__ (Keyfile or Certificate)
-* __Role Based Access Control__
+* __Client Authentication__ (SCRAM-SHA-1, Certificate, LDAP \[proxy & direct\] & Kerberos)
+* __Internal Authentication__ (Keyfile & Certificate)
+* __Role Based Access Control__ (Internal DB and External LDAP role memberships)
 * __Auditing__
 * __Encryption-over-the-Wire__ (TLS/SSL)
-* __Encryption-at-Rest__ (Keyfile or KMIP)
+* __Encryption-at-Rest__ (Keyfile & KMIP)
 * __FIPS 140-2 usage__
 
 When the project is run on a Laptop/PC, the following local environment is generated, in a set of 5 Virtual Machines:
@@ -131,7 +131,7 @@ Each sub-section below outlines a specific way to connect to the MongoDB cluster
      );
     > show dbs
 
-#### 2.3.4 Connect with LDAP Proxy authentication
+#### 2.3.4 Connect with LDAP authentication (for both Proxy and Direct mechanisms)
 
     $ vagrant ssh dbnode1
     $ mongo    # If SSL disabled
@@ -191,8 +191,10 @@ The database is configured with an admin user and a sample user (see vars/extern
 
     // If using Username/Password Challenge (SCRAM-SHA-1) authentication:
     > db.getSiblingDB("admin").runCommand({usersInfo:1})
-    // If using Certificate/LDAP/Kerberos authentication:
+    // If using Certificate / Kerberos authentication / LDAP (configured to use internal DB role memberships):
     > db.getSiblingDB("$external").runCommand({usersInfo:1})
+    // If using LDAP (configured to use external LDAP groups role memberships) - NOTE: Only shows groups only, not users
+    > db.getSiblingDB("admin").runCommand({rolesInfo:1})
 
 The MongoDB database/collection that is populated with sample data is: 'maindata.records'. To see the contents of the sample database collection, start the Mongo Shell (see section 2.3) and run:
 
@@ -201,14 +203,26 @@ The MongoDB database/collection that is populated with sample data is: 'maindata
 
 ### 2.5 Investigating the OpenLDAP Server
 
-The OpenLDAP process (/usr/sbin/slapd) is running as a service on the 'centralit' VM, listening on port 389
+The OpenLDAP process (/usr/sbin/slapd) is running as a service on the 'centralit' VM, listening on port 389.
 
-To test the LDAP connection from a host running mongod:
+The LDAP server is populated with the following users and groups via the files/openldap/basedomain.ldif.j2:
+* User : cn=dbmaster,ou=Users,dc=WizzyIndustries,dc=com
+* User : cn=jsmith,ou=Users,dc=WizzyIndustries,dc=com
+* Group: cn=DBAdmin,ou=Groups,dc=WizzyIndustries,dc=com
+* Group: cn=AppReadOnly,ou=Groups,dc=WizzyIndustries,dc=com
+
+One of two mechanisms may be being used to allow mongod to query the LDAP server:
+* LDAP Proxy: Each mongod is configured to use a Simple Authentication and Security Layer (SASL) unix process running on the same machine. It is the SASL process that is configured (in "/etc/saslauthd.conf") with the connection details of the remote LDAP server. The mongod process is configured to use the LDAP Proxy mechanism via the parameter "setParameter.saslauthdPath" in "/etc/mongod.conf".
+* LDAP Direct: A new feature in in MongoDB 3.4. Each mongod is configured to connect directly to the remote LDAP server via its own native LDAP libaries. The mongod process is configured to use the LDAP Direct mechanism via parameters hanging off "security.ldap" in "/etc/mongod.conf".
+
+If LDAP Direct is configured, new in MongoDB 3.4 is also the option to delegate access control role memberships to external groups defined in the LDAP server. If this is configured (via the "role_membership" parameter in "external_vars.yml), the roles defined for the MongoDB cluster are mapped to the two LDAP groups listed earlier in this document section.
+
+If using LDAP Proxy based authentication, each database host VM will be running the SASL process, which the local mongod instance will connect to. In this configuration, the LDAP connection can be tested directly from from the host running mongod:
 
     $ vagrant ssh dbnode1
     $ testsaslauthd -u jsmith -p Pa55word124 -f /var/run/saslauthd/mux -s ldap
 
-The 'ldapsearch' tool can be used to look at the contents of the LDAP Directory:
+Regardless of whether Proxy or Direct LDAP integration is being used, the 'ldapsearch' tool can be used to look at the contents of the LDAP Directory:
 
     $ vagrant ssh centralit
     # Show contents of whole directory (password: "ldapManagerPa55wd123"):
@@ -282,7 +296,7 @@ If Kerberos has been configured, and vagrant halt & up have been run to restart 
 * Some users (Mac only?) reporting that when they run vagrant up for the first time, the creation of 'centralit' is skipped resulting in missing .pem files during configuration of dbnode VMs ('vagrant destroy -f' seems to clear this up). Not yet diagnosed why this is occurring for some users.
 * PyKMIP has no built-in persistence, so if vagrant halt and then vagrant up have been run, the mongod replicas won't start properly, if encryption is enabled using KMIP. As a result, vars/external_vars.yml has been changed to use keyfile by default, for encryption-at-rest, to reduce the number of people that hit this issue.
 * When generating the keytab on the 'centralit' VM, generate separate keytabs for dbnode1, dbnode2 & dbnode3 for better security isolation
-* Configure Open LDAP to use TLS
+* Configure connectivity (both Proxy and Direct) to Open LDAP to use TLS
 * Use more elegant way of waiting for replica-set primary to be ready, rather than pausing for 30 seconds and then hoping it is ready
 * Extend the 'yum' timeout duration, to avoid timeout failures when running 'vagrant up' with a slow internet connection.
 * Cache the MongoDB Enterprise yum repository's contents locally ready for quicker re-running of 'vagrant up'

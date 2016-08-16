@@ -44,3 +44,18 @@ sn: {{ db_sampleuser_name }}
 uid: {{ db_sampleuser_name }}
 userpassword: {{ sampleuserpasswd_hash }}
 
+#
+# Groups
+#
+
+dn: cn=DBAdmin,ou=Groups,dc={{ org_name }},dc={{ org_type }}
+objectclass: groupofnames
+cn: DBAdmin
+member: cn={{ db_adminuser_name }},ou=Users,dc={{ org_name }},dc={{ org_type }}
+
+dn: cn=AppReadOnly,ou=Groups,dc={{ org_name }},dc={{ org_type }}
+objectclass: groupofnames
+cn: AppReadOnly
+member: cn={{ db_adminuser_name }},ou=Users,dc={{ org_name }},dc={{ org_type }}
+member: cn={{ db_sampleuser_name }},ou=Users,dc={{ org_name }},dc={{ org_type }}
+

@@ -65,6 +65,7 @@ Vagrant.configure(2) do |config|
         end
     end
 =begin
+ansible.verbose = "vvv"
 =end
 end
 
