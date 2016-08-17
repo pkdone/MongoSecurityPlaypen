@@ -10,7 +10,7 @@ The project demonstrates the following MongoDB Security capabilities.
 * __Internal Authentication__ - Keyfile & Certificate
 * __Role Based Access Control__ - Internal-DB & External-LDAP authorization
 * __Auditing__
-* __Encryption-over-the-Wire__ -TLS/SSL
+* __Encryption-over-the-Wire__ - TLS/SSL
 * __Encryption-at-Rest__ - Keyfile & KMIP
 * __Views__ - Secured by custom role
 * __FIPS 140-2 usage__
