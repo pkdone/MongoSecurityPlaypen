@@ -12,7 +12,7 @@ The project demonstrates the following MongoDB Security capabilities.
 * __Auditing__
 * __Encryption-over-the-Wire__ - TLS/SSL
 * __Encryption-at-Rest__ - Keyfile & KMIP
-* __Views__ - Secured by custom role
+* __Secured Views__ - Using custom role
 * __FIPS 140-2 usage__
 
 When the project is run on a Laptop/PC, the following local environment is generated, in a set of 5 Virtual Machines:
@@ -190,9 +190,9 @@ The Auditing parameters, specified in /var/log/mongod/mongod.conf, are configure
 
 The database is configured with an admin user and a sample user (see vars/external_vars.yml for the usernames & passwords). To view the different access control settings for these users, start the Mongo Shell (see section 2.3) and then run the command:
 
-    // If using Username/Password Challenge (SCRAM-SHA-1) authentication:
+    // If authentication based on Username/Password Challenge (SCRAM-SHA-1):
     > db.getSiblingDB("admin").runCommand({usersInfo:1})
-    // If using Certificate / Kerberos authentication / LDAP (configured to use internal DB role memberships for authorization):
+    // If authentication based on Certificate / Kerberos / LDAP (configured to use internal DB role memberships for authorization):
     > db.getSiblingDB("$external").runCommand({usersInfo:1})
     
 Note: If using LDAP which is configured to use external LDAP groups role memberships for authorization, the command above will not show any users because they are defined completely in LDAP, with no explicit mappings declared in either the "admin" or "$external" database.
@@ -308,7 +308,7 @@ If Kerberos has been configured, and vagrant halt & up have been run to restart 
 ## 4  Project TODOs
 * Some users (Mac only?) reporting that when they run vagrant up for the first time, the creation of 'centralit' is skipped resulting in missing .pem files during configuration of dbnode VMs ('vagrant destroy -f' seems to clear this up). Not yet diagnosed why this is occurring for some users.
 * PyKMIP has no built-in persistence, so if vagrant halt and then vagrant up have been run, the mongod replicas won't start properly, if encryption is enabled using KMIP. As a result, vars/external_vars.yml has been changed to use keyfile by default, for encryption-at-rest, to reduce the number of people that hit this issue.
-* When generating the keytab on the 'centralit' VM, generate separate keytabs for dbnode1, dbnode2 & dbnode3 for better security isolation
+* When generating the Kerberos keytab on the 'centralit' VM, generate separate keytabs for dbnode1, dbnode2 & dbnode3 for better security isolation
 * Configure connectivity (both Proxy and Direct) to Open LDAP to use TLS
 * Use more elegant way of waiting for replica-set primary to be ready, rather than pausing for 30 seconds and then hoping it is ready
 * Extend the 'yum' timeout duration, to avoid timeout failures when running 'vagrant up' with a slow internet connection.
