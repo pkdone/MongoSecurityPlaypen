@@ -198,6 +198,7 @@ The database is configured with an admin user and a sample user (see vars/extern
 Note: If using LDAP which is configured to use external LDAP groups role memberships for authorization, the command above will not show any users because they are defined completely in LDAP, with no explicit mappings declared in either the "admin" or "$external" database.
 
 The database is also configured with a custom role called 'AppReadOnly', which can be viewed with the following command:
+
     > db.getSiblingDB("admin").runCommand({rolesInfo:1})
 
 Once authenticated in the Shell (see section 2.3), to see the authenticated user's information including their roles (plus LDAP external authorization mappings, if configured), run the command:
