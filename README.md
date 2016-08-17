@@ -8,10 +8,11 @@ The project demonstrates the following MongoDB Security capabilities.
 
 * __Client Authentication__ - SCRAM-SHA-1, Certificate, LDAP (Proxy & Direct) & Kerberos
 * __Internal Authentication__ - Keyfile & Certificate
-* __Role Based Access Control__ - Internal DB and External LDAP role memberships
+* __Role Based Access Control__ - Internal-DB & External-LDAP authorization
 * __Auditing__
 * __Encryption-over-the-Wire__ -TLS/SSL
 * __Encryption-at-Rest__ - Keyfile & KMIP
+* __Views__ - Secured by custom role
 * __FIPS 140-2 usage__
 
 When the project is run on a Laptop/PC, the following local environment is generated, in a set of 5 Virtual Machines:
@@ -191,19 +192,26 @@ The database is configured with an admin user and a sample user (see vars/extern
 
     // If using Username/Password Challenge (SCRAM-SHA-1) authentication:
     > db.getSiblingDB("admin").runCommand({usersInfo:1})
-    // If using Certificate / Kerberos authentication / LDAP (configured to use internal DB role memberships):
+    // If using Certificate / Kerberos authentication / LDAP (configured to use internal DB role memberships for authorization):
     > db.getSiblingDB("$external").runCommand({usersInfo:1})
-    // If using LDAP (configured to use external LDAP groups role memberships) - NOTE: Only shows groups only, not users
+    
+Note: If using LDAP which is configured to use external LDAP groups role memberships for authorization, the command above will not show any users because they are defined completely in LDAP, with no explicit mappings declared in either the "admin" or "$external" database.
+
+The database is also configured with a custom role called 'AppReadOnly', which can be viewed with the following command:
     > db.getSiblingDB("admin").runCommand({rolesInfo:1})
 
-Once authenticated in the Shell (see section 2.3), to see the authenticated user's information including their roles, run the command:
+Once authenticated in the Shell (see section 2.3), to see the authenticated user's information including their roles (plus LDAP external authorization mappings, if configured), run the command:
 
     > db.getSiblingDB("admin").runCommand({connectionStatus:1})
 
-The MongoDB database/collection that is populated with sample data is: 'maindata.records'. To see the contents of the sample database collection, start the Mongo Shell (see section 2.3) and run:
+The MongoDB database/collection that is populated with sample data is: 'maindata.people'. To see the contents of the sample database collection, start the Mongo Shell (see section 2.3) and run:
 
     > use maindata
-    > db.records.find().pretty()
+    > db.people.find().pretty()
+
+Also in the maindata database, is a View called "adults" which shows data from the "people" collection, only where the person's age is greater than or equal to 18. The main database sample user ("jsmith") only has privileges (via a customer role called "AppReadOnly") to see the data from this View and not from any other collections. To see the contents of this View, run:
+
+    > db.adults.find().pretty()
 
 ### 2.5 Investigating the OpenLDAP Server
 
@@ -276,7 +284,7 @@ The status of the PyKMIP service and some of its output events can also be viewe
 
 ### 2.8 Investigating the Test Client Python Application
 
-A simple Python client, that uses the PyMongo driver to test the secure connection to the remote replica set and query and print out some data from the database/collection maindata.records, is located in the home directory of the default vagrant OS user in the 'client' VM (ie.: /home/vagrant/TestSecPyClient.py)
+A simple Python client, that uses the PyMongo driver to test the secure connection to the remote replica set and query and print out some data from the database/view maindata.adults, is located in the home directory of the default vagrant OS user in the 'client' VM (ie.: /home/vagrant/TestSecPyClient.py)
 
 The test client application can be simply run, over and over again, by SSH'ing to the 'client' VM and invoking it directly, eg.:
 

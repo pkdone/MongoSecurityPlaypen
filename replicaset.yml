@@ -23,7 +23,7 @@
         - configure_replicaset.js
         - create_admin_user_or_rolemapping.js
         - generate_sampledata.js
-        - create_normal_user_or_rolemapping.js
+        - create_normal_user_and_role.js
         - reset_priorities.js
 
     - name: Configure replica set cluster then pause to allow primary to come up properly
@@ -35,7 +35,7 @@
       with_items:
         - create_admin_user_or_rolemapping.js
         - generate_sampledata.js
-        - create_normal_user_or_rolemapping.js
+        - create_normal_user_and_role.js
         - reset_priorities.js
 
     - name: Clean up all temporarily generated files
@@ -44,6 +44,6 @@
         - configure_replicaset.js
         - create_admin_user_or_rolemapping.js
         - generate_sampledata.js
-        - create_normal_user_or_rolemapping.js
+        - create_normal_user_and_role.js
         - reset_priorities.js
 

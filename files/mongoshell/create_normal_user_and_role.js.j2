@@ -5,13 +5,38 @@
 
 {% include "authenticate.js.j2" %}
 
+//
+// Create a read-only role on the adults collection/view only
+//
+
+{% if client_auth_method == 'ldap' and ldap_integration == 'direct' and role_membership == 'external' %}
+rolename = "cn=AppReadOnly,ou=Groups,dc=WizzyIndustries,dc=com";
+{% else %}
+rolename = "AppReadOnly";
+{% endif %}
+
+db.getSiblingDB("admin").createRole(
+    {
+        role: rolename,
+        privileges: [
+            {resource: { db: "maindata", collection: "adults" }, actions: ["find"]}
+        ],
+        roles: []
+    }
+ );
+
+
+//
+// Create user in admin or external dataabase, associated with the new role
+//
+
 {% if client_auth_method == 'userpwd' %}
 // Creating local database user for SCRAM-SHA-1 user access
 db.getSiblingDB("admin").createUser(
     {
       user : "{{ db_sampleuser_name }}",
       pwd  : "{{ db_sampleuser_password }}",
-      roles: [ { role: "read", db: "maindata" } ]
+      roles: [ { role: rolename, db: "admin" } ]
     }
  );
 {% elif client_auth_method == 'cert' %}
@@ -19,33 +44,17 @@ db.getSiblingDB("admin").createUser(
 db.getSiblingDB("$external").createUser(
     {
       user : "CN={{ db_sampleuser_name }}{{ client_dn_suffix }}",
-      roles: [ { role: "read", db: "maindata" } ]
+      roles: [ { role: rolename, db: "admin" } ]
     }
  );
 {% elif client_auth_method == 'ldap' and ldap_integration == 'direct' and role_membership == 'external' %}
-// Creating external authentication reference for LDAP user access with external LDAP group/role mappings
-// (if using native LDAP integration with external authorization, need to authenticate and then create role names that match external LDAP groups)
-db.getSiblingDB("$external").auth(
-    {
-         mechanism: "PLAIN",
-         user: "{{ db_adminuser_name }}",
-         pwd:  "{{ db_adminuser_password }}",
-         digestPassword: false
-    }
- );
-db.getSiblingDB("admin").createRole(
-    { 
-        role: "cn=AppReadOnly,ou=Groups,dc=WizzyIndustries,dc=com", 
-        privileges: [], 
-        roles: [ { role: "read", db: "maindata" } ]
-    }
-); 
+// Nothing to do as as using native LDAP integration with external authorization, so no need to create a user mapped to the role, because the external LDAP configuration already infers it
 {% elif client_auth_method == 'ldap' %}
 // Creating external authentication reference for LDAP proxy or direct user access, and role mappings managed internally
 db.getSiblingDB("$external").createUser(
     {
       user : "{{ db_sampleuser_name }}",
-      roles: [ { role: "read", db: "maindata" } ]
+      roles: [ { role: rolename, db: "admin" } ]
     }
  );
 {% elif client_auth_method == 'kerberos' %}
@@ -53,11 +62,11 @@ db.getSiblingDB("$external").createUser(
 db.getSiblingDB("$external").createUser(
     {
       user : "{{ db_sampleuser_name }}@{{ org_name|upper }}.{{ org_type|upper }}",
-      roles: [ { role: "read", db: "maindata" } ]
+      roles: [ { role: rolename, db: "admin" } ]
     }
  );
 {% else %}
-// Nothing to do as authentication is not enabled in MongoDB (or using external LDAP role to group mappings)
+// Nothing to do as authentication is not enabled in MongoDB 
 {% endif %}
 
 

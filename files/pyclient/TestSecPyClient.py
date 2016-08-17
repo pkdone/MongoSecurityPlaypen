@@ -24,10 +24,10 @@ def main():
             client = MongoClient(connectionURL)
 
         db = client.maindata
-        collection = db.records
+        collection = db.adults
 
-        for record in collection.find({"age": {"$gt": 40}}):
-            print " ** Person with age over 40 found - name: %s **   " % record['name']
+        for record in collection.find({"favcolour": {"$ne": "Blue"}}):
+            print " ** Adult whose favourite colour is not blue found - name: %s **   " % record['name']
     except:
         print "  Unexpected error: %s  " % sys.exc_info()[1]
 

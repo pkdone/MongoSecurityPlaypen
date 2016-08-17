@@ -6,8 +6,17 @@
 {% include "authenticate.js.j2" %}
 
 db = db.getSiblingDB("maindata");
-db.records.insert({name: 'Alice', age: 41});
-db.records.insert({name: 'Bob', age: 39});
-db.records.insert({name: 'Kate', age: 40});
-db.records.insert({name: 'William', age: 41});
+
+db.people.insert([
+    {name: 'Alice', favcolour: 'Blue', age: 41},
+    {name: 'Bob', favcolour: 'Pink', age: 39},
+    {name: 'Kate', favcolour: 'Green', age: 12},
+    {name: 'William', favcolour: 'Yellow', age: 41}
+]);
+
+db.createView("adults", "people", [
+    { $match: {age: {$gt: 18}} },
+    { $project: {age: 0} }
+]);
+
 
