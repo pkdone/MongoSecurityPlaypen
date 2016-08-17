@@ -32,7 +32,7 @@
     - chdomain.ldif
     - basedomain.ldif
 
-- name: Run LDAP commands with LDIFF files to modify OpenLDAP schema
+- name: Run LDAP commands with LDIF files to congure the OpenLDAP instance
   command: /usr/bin/ldapadd -Y EXTERNAL -H ldapi:/// -f {{ item }}
   with_items:
     - /tmp/chmasterpwd.ldif
@@ -41,7 +41,7 @@
     - /etc/openldap/schema/inetorgperson.ldif
     - /tmp/chdomain.ldif 
 
-- name: Run ldif file to import the base infrastructure
+- name: Run LDIF file to import the org/user/groups entities
   command: /usr/bin/ldapadd -x -D cn=Manager,dc={{ org_name }},dc={{ org_type }} -w {{ ldap_manager_password }} -f /tmp/basedomain.ldif
 
 - name: Clean up all temporarily generated files

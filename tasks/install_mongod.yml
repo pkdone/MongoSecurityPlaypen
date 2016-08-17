@@ -9,11 +9,11 @@
 - yum: name=numactl state=latest
 
 - name: Install and configure MongoDB from the enterprise binaries repository
-# TODO: Restore when MongoDB 3.4 is released to repos
+# TODO: Restore when MongoDB 3.4 is released to yum repos
 # template: src=files/mongod/mongodb-enterprise.repo.j2 dest=/etc/yum.repos.d/mongodb-enterprise.repo
-# TODO: REMOVE >>>>>>>
-  get_url: url=http://repo.mongodb.com/yum/redhat/7/mongodb-enterprise/3.3/x86_64/RPMS/mongodb-enterprise-unstable-server-3.3.10-1.el7.x86_64.rpm dest=/home/vagrant/mongodb-enterprise-unstable-server-3.3.10-1.el7.x86_64.rpm mode=0550
-- get_url: url=http://repo.mongodb.com/yum/redhat/7/mongodb-enterprise/3.3/x86_64/RPMS/mongodb-enterprise-unstable-shell-3.3.10-1.el7.x86_64.rpm dest=/home/vagrant/mongodb-enterprise-unstable-shell-3.3.10-1.el7.x86_64.rpm mode=0550
+# TODO: REMOVE when 3.4 released >>>>>>>
+  get_url: url=http://repo.mongodb.com/yum/redhat/7/mongodb-enterprise/3.3/x86_64/RPMS/mongodb-enterprise-unstable-server-3.3.11-1.el7.x86_64.rpm dest=/home/vagrant/mongodb-enterprise-unstable-server-3.3.11-1.el7.x86_64.rpm mode=0550
+- get_url: url=http://repo.mongodb.com/yum/redhat/7/mongodb-enterprise/3.3/x86_64/RPMS/mongodb-enterprise-unstable-shell-3.3.11-1.el7.x86_64.rpm dest=/home/vagrant/mongodb-enterprise-unstable-shell-3.3.11-1.el7.x86_64.rpm mode=0550
 - yum: pkg={{ item }} disable_gpg_check=yes state=present
   with_items:
     - net-snmp
@@ -23,11 +23,11 @@
     - net-snmp-libs
 - yum: name=/home/vagrant/{{ item }} state=present
   with_items:
-    - mongodb-enterprise-unstable-server-3.3.10-1.el7.x86_64.rpm
-    - mongodb-enterprise-unstable-shell-3.3.10-1.el7.x86_64.rpm
+    - mongodb-enterprise-unstable-server-3.3.11-1.el7.x86_64.rpm
+    - mongodb-enterprise-unstable-shell-3.3.11-1.el7.x86_64.rpm
 # TODO: <<<<<< END REMOVE
 - copy: src=mongod/99-mongodb-nproc.conf.j2 dest=/etc/security/limits.d/99-mongodb-nproc.conf
-# TODO: Restore when MongoDB 3.4 is released to repos
+# TODO: Restore when MongoDB 3.4 is released to yum repos
 #- yum: name=mongodb-enterprise state=latest
 - template: src=files/mongod/mongod.conf.j2 dest=/etc/mongod.conf owner=mongod group=mongod mode=u+rw
 

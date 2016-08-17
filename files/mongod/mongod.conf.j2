@@ -54,9 +54,8 @@ security:
 {% endif %}
 {% if client_auth_method == 'ldap' and ldap_integration == 'direct' %}
    ldap:
-        # TODO: remove ldap: from url for 3.3.11
-        servers: "ldap://centralit.vagrant.dev"
-        # TODO: add new ldapTransportSecurity = none property for 3.3.11
+        servers: "centralit.vagrant.dev"
+        transportSecurity: "none"
         # Translate username to full LDAP DN before looking up in LDAP
         userToDNMapping: '[ 
                 {match: "(.+)", substitution: "cn={0},ou=Users,dc=WizzyIndustries,dc=com"} 
@@ -84,7 +83,7 @@ security:
       clientCertificatePassword: {{ kmip_client_key_passwd }}
 {% endif %}
 
-{% if client_auth_method != 'none' or auditing_enabled%}
+{% if client_auth_method != 'none' or auditing_enabled %}
 setParameter:
 {% endif %}
 {% if client_auth_method == 'ldap' and ldap_integration == 'proxy' %}
