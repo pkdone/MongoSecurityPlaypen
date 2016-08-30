@@ -6,6 +6,9 @@ Vagrant.configure(2) do |config|
     # Install Centos 7.1
     config.vm.box = "bento/centos-7.1"
 
+    # TODO: Remove workaround for vagrant 1.8.5 bug, see: https://github.com/mitchellh/vagrant/issues/7610
+    config.ssh.insert_key = false
+
     # CentrailIT VM
     config.vm.define :centralit do |centralit|
         centralit.vm.provider "virtualbox" do |vb|
