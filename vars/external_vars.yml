@@ -4,6 +4,7 @@ client_auth_method     :  ldap      # OPTIONS: none | userpwd | cert | ldap | ke
 internal_auth_method   :  keyfile   # OPTIONS: none | keyfile | cert   (must not be none if client authentication is not none)
 ssl_enabled            :  true      # OPTIONS: false | true            (must be true if client authentication is set to cert)
 auditing_enabled       :  true      # OPTIONS: false | true
+redactlogs_enabled     :  true      # OPTIONS: false | true
 encryptdb_enabled      :  true      # OPTIONS: false | true
 encryptdb_key_loc      :  keyfile   # OPTIONS: kmip | keyfile          (ignored if encryptdb is disabled)
 fips140_2_enabled      :  true      # OPTIONS: false | true

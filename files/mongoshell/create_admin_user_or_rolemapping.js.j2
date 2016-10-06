@@ -33,7 +33,7 @@ db.getSiblingDB("$external").auth(
  );
 db.getSiblingDB("admin").createRole(
     { 
-        role: "cn=DBAdmin,ou=Groups,dc=WizzyIndustries,dc=com", 
+        role: "cn=DBAdmin,ou=Groups,dc={{ org_name }},dc={{ org_type }}", 
         privileges: [], 
         roles: ["root"] 
     }

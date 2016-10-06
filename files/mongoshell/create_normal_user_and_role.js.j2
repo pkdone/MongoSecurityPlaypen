@@ -10,7 +10,7 @@
 //
 
 {% if client_auth_method == 'ldap' and ldap_integration == 'direct' and role_membership == 'external' %}
-rolename = "cn=AppReadOnly,ou=Groups,dc=WizzyIndustries,dc=com";
+rolename = "cn=AppReadOnly,ou=Groups,dc={{ org_name }},dc={{ org_type }}";
 {% else %}
 rolename = "AppReadOnly";
 {% endif %}

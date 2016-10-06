@@ -42,7 +42,7 @@ net:
 replication:
     replSetName: "{{ rep_set_name }}"
 
-{% if internal_auth_method != 'none' or encryptdb_enabled %}
+{% if internal_auth_method != 'none' or encryptdb_enabled or redactlogs_enabled %}
 security:
 {% endif %}
 {% if internal_auth_method != 'none' %}
@@ -52,13 +52,16 @@ security:
 {% if internal_auth_method == 'keyfile' %}
    keyFile: "/etc/security/internal-auth-mongodb-keyfile"
 {% endif %}
+{% if redactlogs_enabled %}
+   redactClientLogData: true
+{% endif %}
 {% if client_auth_method == 'ldap' and ldap_integration == 'direct' %}
    ldap:
         servers: "centralit.vagrant.dev"
         transportSecurity: "none"
         # Translate username to full LDAP DN before looking up in LDAP
         userToDNMapping: '[ 
-                {match: "(.+)", substitution: "cn={0},ou=Users,dc=WizzyIndustries,dc=com"} 
+                {match: "(.+)", substitution: "cn={0},ou=Users,dc={{ org_name }},dc={{ org_type }}"} 
         ]' 
 
         bind: 

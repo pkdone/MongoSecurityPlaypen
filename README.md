@@ -10,6 +10,7 @@ The project demonstrates the following MongoDB Security capabilities.
 * __Internal Authentication__ - Keyfile & Certificate
 * __Role Based Access Control__ - Internal-DB & External-LDAP authorization
 * __Auditing__
+* __Log Redaction__
 * __Encryption-over-the-Wire__ - TLS/SSL
 * __Encryption-at-Rest__ - Keyfile & KMIP
 * __Secured Views__ - Using custom role
@@ -181,6 +182,8 @@ If Kerberos is enabled, the following file has additional environment variables 
 If Kerberos is enabled, the mongod process will log Kerberos debug info at /var/log/mongodb/krbtrace.log - this needs to viewed as the 'mongod' OS user eg.:
 
     $ sudo -u mongod less /var/log/mongodb/krbtrace.log
+
+If Log Redaction is enabled, the mongod process will redact messages, to avoid client data being included in the system log messages appended to the mongodb log file at: /var/log/mongodb/mongod.log
 
 If Auditing is enabled, the mongod process will log Audit events in a BSON format to: /var/lib/mongo/auditLog.bson - to view these events, run:
 

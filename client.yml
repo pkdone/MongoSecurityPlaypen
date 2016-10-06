@@ -39,7 +39,7 @@
       when: client_auth_method == 'cert'
 
     - name: Template the PyMongo script files into local dir
-      template: src=files/pyclient/TestSecPyClient.py dest=/home/vagrant/TestSecPyClient.py mode=u+rwx
+      template: src=files/pyclient/TestSecPyClient.py.j2 dest=/home/vagrant/TestSecPyClient.py mode=u+rwx
 
     - name: Run test client python script
       command: /home/vagrant/TestSecPyClient.py
