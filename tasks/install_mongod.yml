@@ -11,9 +11,9 @@
 - name: Install and configure MongoDB from the enterprise binaries repository
 # TODO: Restore when MongoDB 3.4 is released to yum repos
 # template: src=files/mongod/mongodb-enterprise.repo.j2 dest=/etc/yum.repos.d/mongodb-enterprise.repo
-# TODO: REMOVE when 3.4 released >>>>>>>               
-  get_url: url=https://repo.mongodb.com/yum/redhat/7/mongodb-enterprise/testing/x86_64/RPMS/mongodb-enterprise-server-3.4.0-0.1.rc3.el7.x86_64.rpm dest=/home/vagrant/mongodb-enterprise-server-3.4.0-0.1.rc3.el7.x86_64.rpm mode=0550
-- get_url: url=https://repo.mongodb.com/yum/redhat/7/mongodb-enterprise/testing/x86_64/RPMS/mongodb-enterprise-shell-3.4.0-0.1.rc3.el7.x86_64.rpm dest=/home/vagrant/mongodb-enterprise-shell-3.4.0-0.1.rc3.el7.x86_64.rpm mode=0550
+# TODO: REMOVE when 3.4 released >>>>>>>      
+  get_url: url=https://repo.mongodb.com/yum/redhat/7/mongodb-enterprise/testing/x86_64/RPMS/mongodb-enterprise-server-3.4.0-0.1.rc4.el7.x86_64.rpm dest=/home/vagrant/mongodb-enterprise-server-3.4.0-0.1.rc4.el7.x86_64.rpm mode=0550
+- get_url: url=https://repo.mongodb.com/yum/redhat/7/mongodb-enterprise/testing/x86_64/RPMS/mongodb-enterprise-shell-3.4.0-0.1.rc4.el7.x86_64.rpm dest=/home/vagrant/mongodb-enterprise-shell-3.4.0-0.1.rc4.el7.x86_64.rpm mode=0550
 - yum: pkg={{ item }} disable_gpg_check=yes state=present
   with_items:
     - net-snmp
@@ -23,8 +23,8 @@
     - net-snmp-libs
 - yum: name=/home/vagrant/{{ item }} state=present
   with_items:
-    - mongodb-enterprise-server-3.4.0-0.1.rc3.el7.x86_64.rpm
-    - mongodb-enterprise-shell-3.4.0-0.1.rc3.el7.x86_64.rpm
+    - mongodb-enterprise-server-3.4.0-0.1.rc4.el7.x86_64.rpm
+    - mongodb-enterprise-shell-3.4.0-0.1.rc4.el7.x86_64.rpm
 # TODO: <<<<<< END REMOVE
 - copy: src=mongod/99-mongodb-nproc.conf.j2 dest=/etc/security/limits.d/99-mongodb-nproc.conf
 # TODO: Restore when MongoDB 3.4 is released to yum repos
