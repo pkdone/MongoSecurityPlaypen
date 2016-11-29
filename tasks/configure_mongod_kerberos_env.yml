@@ -10,8 +10,9 @@
   copy: src=tmp/krb5.keytab dest=/etc/krb5.keytab owner=mongod group=mongod mode=0400
 - copy: src=tmp/krb5.conf dest=/etc/krb5.conf owner=mongod group=mongod mode=0444
 
-- name: Setup Kerberos environment variables for MongoD to pick up when it starts (including path of Kerberos client log file)
-  lineinfile: dest=/etc/sysconfig/mongod regexp='' insertafter=EOF line='export KRB5_KTNAME=\"/etc/krb5.keytab\"' state=present
+# In 3.4 and the move from to use systemd, the sysconfig mongod file no longer exists, so not sure how to set tracing if needed (or override location of keytab)
+#- name: Setup Kerberos environment variables for MongoD to pick up when it starts (including path of Kerberos client log file)
+#  lineinfile: dest=/etc/sysconfig/mongod regexp='' insertafter=EOF line='export KRB5_KTNAME=\"/etc/krb5.keytab\"' state=present
 # Note: The addition below seems to remove the keytab file variable above, however /etc/krb5.keytab seems to be the default assumed location
-- lineinfile: dest=/etc/sysconfig/mongod regexp='' insertafter=EOF line='export KRB5_TRACE=\"/var/log/mongodb/krbtrace.log\"' state=present
+#- lineinfile: dest=/etc/sysconfig/mongod regexp='' insertafter=EOF line='export KRB5_TRACE=\"/var/log/mongodb/krbtrace.log\"' state=present
 

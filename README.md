@@ -4,7 +4,7 @@ MongoSecurityPlaypen is intended to be used for learning, exploring or demo'ing 
 
 **WARNING** *This project is intentionally NOT "production secure" to make it easier for people to explore. For example, no firewalls are configured and passwords are passed around on the command line which can be view-able in OS user history and OS process lists. Other potential security holes are likely to exist. It is strongly suggested that you consult the [MongoDB Security Checklist](https://docs.mongodb.com/manual/administration/security-checklist/).* 
 
-The project demonstrates the following MongoDB 3.4 (3.4.0 rc5) security capabilities.
+The project demonstrates the following MongoDB 3.4 security capabilities.
 
 * __Client Authentication__ - SCRAM-SHA-1, Certificate, LDAP (Proxy & Direct) & Kerberos
 * __Internal Authentication__ - Keyfile & Certificate
@@ -38,7 +38,7 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
 ### 1.2 Main Steps to Run
 
 1. If required, change any values in the text file __vars/external_vars.yml__ to define which security features should be turned on and off
-2. From the terminal/shell, ensure the current directory is the __base directory__ of this MongoSecurityPlaypen project (ie. the directory containing the file __Vagrantfile__)
+2. From the terminal/shell, ensure the current directory is the __base directory__ of this MongoSecurityPlaypen project (i.e. the directory containing the file __Vagrantfile__)
 3. __Run the following commands__ to configure the 5-virtual-machine environment outlined in the diagram above - includes final step of automatically running the Test Client Python Application and listing the results in the console:
 
     ```
@@ -229,7 +229,7 @@ The LDAP server is populated with the following users and groups via the project
 
 One of two mechanisms may be being used to allow mongod to query the LDAP server:
 * LDAP Proxy: Each mongod is configured to use a Simple Authentication and Security Layer (SASL) unix process running on the same machine. It is the SASL process that is configured (in "/etc/saslauthd.conf") with the connection details of the remote LDAP server. The mongod process is configured to use the LDAP Proxy mechanism via the parameter "setParameter.saslauthdPath" in "/etc/mongod.conf".
-* LDAP Direct: A new feature in in MongoDB 3.4. Each mongod is configured to connect directly to the remote LDAP server via its own native LDAP libaries. The mongod process is configured to use the LDAP Direct mechanism via parameters hanging off "security.ldap" in "/etc/mongod.conf".
+* LDAP Direct: A new feature in in MongoDB 3.4. Each mongod is configured to connect directly to the remote LDAP server via its own native LDAP libraries. The mongod process is configured to use the LDAP Direct mechanism via parameters hanging off "security.ldap" in "/etc/mongod.conf".
 
 If using LDAP Proxy based authentication, each database host VM will be running the SASL process, which the local mongod instance will connect to. In this configuration, the LDAP connection can be tested directly from from the host running mongod:
 
@@ -302,9 +302,9 @@ If Kerberos has been configured, and vagrant halt & up have been run to restart 
 
 ## 3  Major Software Packages Installed
 * CentOS 7.1
-* MongoDB Enterprise latest unstable 3.4.x version (was version 3.4.0 rc5 on 29-Nov-2016)
-* OpenLDAP (slapd) latest version in CentOS 7.1 Yum Repository (was version 2.4.40 on 12-Jul-2016)
-* MIT Kerberos KDC (krb5-server) latest version in CentOS 7.1 Yum Repository (was version 1.13.2 on 12-Jul-2016)
+* MongoDB Enterprise latest 3.4.x version (was version 3.4.0-1 on 29-Nov-2016)
+* OpenLDAP (slapd) latest version in CentOS 7.1 Yum Repository (was version 2.4.40-9 on 29-Nov-2016)
+* MIT Kerberos KDC (krb5-server) latest version in CentOS 7.1 Yum Repository (was version 1.13.2-12 on 29-Nov-2016)
 * PyKMIP version 0.4.0
 
 
