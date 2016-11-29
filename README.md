@@ -4,7 +4,7 @@ MongoSecurityPlaypen is intended to be used for learning, exploring or demo'ing 
 
 **WARNING** *This project is intentionally NOT "production secure" to make it easier for people to explore. For example, no firewalls are configured and passwords are passed around on the command line which can be view-able in OS user history and OS process lists. Other potential security holes are likely to exist. It is strongly suggested that you consult the [MongoDB Security Checklist](https://docs.mongodb.com/manual/administration/security-checklist/).* 
 
-The project demonstrates the following MongoDB Security capabilities.
+The project demonstrates the following MongoDB 3.4 (3.4.0 rc5) security capabilities.
 
 * __Client Authentication__ - SCRAM-SHA-1, Certificate, LDAP (Proxy & Direct) & Kerberos
 * __Internal Authentication__ - Keyfile & Certificate
@@ -13,7 +13,7 @@ The project demonstrates the following MongoDB Security capabilities.
 * __Log Redaction__
 * __Encryption-over-the-Wire__ - TLS/SSL
 * __Encryption-at-Rest__ - Keyfile & KMIP
-* __Secured Views__ - Using custom role
+* __Secured Views__ - Using custom roles
 * __FIPS 140-2 usage__
 
 When the project is run on a Laptop/PC, the following local environment is generated, in a set of 5 Virtual Machines:
@@ -47,8 +47,8 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
     ```
 
 **Notes:**
-* May not be necessary to run 'destroy' first, but some users have reported that one of the VMs is not generated when they run 'up', if they don't run 'destroy' first (root cause not yet diagnosed).
-* It may take around 10-15 minutes to complete execution, mainly depending on the speed of the host's internet connection.
+* May not be necessary to run 'destroy' first, but some users have reported that one of the VMs is not generated when they run 'up', if they don't run 'destroy' first (root cause not yet diagnosed). Also some Mac users have reported that the first time they run this it fails, and thereafter it runs fine.
+* It may take around 15 minutes to complete execution, mainly depending on the speed of the host's internet connection.
 * If the internet connection is very slow, the build process may fail with an error due to the CentOS/RedHat package manager (yum) timing out when trying to download binaries.
 * Once completed, the results from the Test Client Python Application will have been displayed towards the end of the Vagrant output text in the console, showing some data queried from the MongoDB replica set.
 * If the configuration process results in an error, run 'vagrant destroy -f' and then try again, as sometimes old environments can get in the way.
@@ -302,7 +302,7 @@ If Kerberos has been configured, and vagrant halt & up have been run to restart 
 
 ## 3  Major Software Packages Installed
 * CentOS 7.1
-* MongoDB Enterprise latest unstable 3.3.x version (was version 3.3.11 on 17-Aug-2016)
+* MongoDB Enterprise latest unstable 3.4.x version (was version 3.4.0 rc5 on 29-Nov-2016)
 * OpenLDAP (slapd) latest version in CentOS 7.1 Yum Repository (was version 2.4.40 on 12-Jul-2016)
 * MIT Kerberos KDC (krb5-server) latest version in CentOS 7.1 Yum Repository (was version 1.13.2 on 12-Jul-2016)
 * PyKMIP version 0.4.0
