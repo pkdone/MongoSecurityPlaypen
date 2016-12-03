@@ -1,10 +1,13 @@
 ---
 #
-# Install MongoDB database ensuring Huge Pages is disabled
+# Install MongoDB database ensuring Huge Pages is disabled and numactrl is present
 # 
 
 - name: Configure a script to disable huge pages and install NUMA control (which will be run by the mongod startup script)
   copy: src=os/disable-transparent-hugepages.j2 dest=/etc/init.d/disable-transparent-hugepages mode=a+x
+# Hack to reload systemd settings otherwise sometimes systemd won't find 'disable-transparent-hugepages',
+#  see: https://github.com/ansible/ansible-modules-core/issues/4113
+- systemd: daemon_reload=yes name=sshd
 - service: name=disable-transparent-hugepages enabled=yes state=started
 - yum: name=numactl state=latest
 
@@ -13,4 +16,5 @@
 - copy: src=mongod/99-mongodb-nproc.conf.j2 dest=/etc/security/limits.d/99-mongodb-nproc.conf
 - yum: name=mongodb-enterprise state=latest
 - template: src=files/mongod/mongod.conf.j2 dest=/etc/mongod.conf owner=mongod group=mongod mode=u+rw
+
 
