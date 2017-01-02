@@ -6,6 +6,9 @@
   become: yes
   become_method: sudo
   tasks:
+    - name: Fix internal network
+      include: tasks/fix_internal_network.yml
+
     - name: Set the "client_auth_method" & "internal_auth_method" vars to appropriate values
       include: tasks/set_auth_methods.yml
 

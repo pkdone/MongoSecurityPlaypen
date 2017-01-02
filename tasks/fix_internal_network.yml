@@ -1,0 +1,18 @@
+---
+#
+# Workaround for Vagrant/VBox/CentOS combination losng internal IP network
+# definitions.
+#
+# See: https://github.com/pkdone/MongoSecurityPlaypen/issues/2
+# See: https://github.com/mitchellh/vagrant/issues/5590
+# See: https://github.com/mitchellh/vagrant/pull/5709
+# See: https://github.com/openshift/openshift-ansible/issues/331
+# 
+
+- name: Being up the internal network with NetworkManager disabled
+  command: ifup enp0s8
+- command: chkconfig NetworkManager off
+- command: chkconfig network on
+- service: name=NetworkManager state=stopped
+- service: name=network state=restarted
+

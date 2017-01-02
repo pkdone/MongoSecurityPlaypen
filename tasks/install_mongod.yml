@@ -17,4 +17,3 @@
 - yum: name=mongodb-enterprise state=latest
 - template: src=files/mongod/mongod.conf.j2 dest=/etc/mongod.conf owner=mongod group=mongod mode=u+rw
 
-

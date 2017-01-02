@@ -4,6 +4,11 @@
   vars_files:
     - vars/external_vars.yml
   tasks:
+    - name: Fix internal network
+      include: tasks/fix_internal_network.yml
+      become: yes
+      become_method: sudo
+
     - name: Populate /etc/hosts file with hostname entries for all VMs
       include: tasks/set_hosts.yml
       become: yes
