@@ -37,7 +37,7 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
 
 ### 1.2 Main Steps to Run
 
-1. Clone this repository, e.g.
+1. Download or Clone this repository (see green "Clone or Download" button at top right of project home page). Example command to clone:.
 
     ```
     $ git clone git@github.com:pkdone/MongoSecurityPlaypen.git
@@ -308,10 +308,10 @@ If Kerberos has been configured, and vagrant halt & up have been run to restart 
 
 
 ## 3  Major Software Packages Installed
-* CentOS 7.1
-* MongoDB Enterprise latest 3.4.x version (was version 3.4.0-1 on 29-Nov-2016)
-* OpenLDAP (slapd) latest version in CentOS 7.1 Yum Repository (was version 2.4.40-9 on 29-Nov-2016)
-* MIT Kerberos KDC (krb5-server) latest version in CentOS 7.1 Yum Repository (was version 1.13.2-12 on 29-Nov-2016)
+* CentOS 7.3
+* MongoDB Enterprise latest 3.4.x version (was version 3.4.7 on 14-Aug-2017)
+* OpenLDAP (slapd) latest version in CentOS 7.3 Yum Repository (was version 2.4.40-13 on 14-Aug-2017)
+* MIT Kerberos KDC (krb5-server) latest version in CentOS 7.3 Yum Repository (was version 1.14.1-27 on 14-Aug-2017)
 * PyKMIP version 0.4.0
 
 
