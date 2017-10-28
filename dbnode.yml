@@ -7,42 +7,42 @@
   become_method: sudo
   tasks:
     - name: Fix internal network
-      include: tasks/fix_internal_network.yml
+      include_tasks: tasks/fix_internal_network.yml
 
     - name: Set the "client_auth_method" & "internal_auth_method" vars to appropriate values
-      include: tasks/set_auth_methods.yml
+      include_tasks: tasks/set_auth_methods.yml
 
     - name: Populate /etc/hosts file with hostname entries for all VMs
-      include: tasks/set_hosts.yml
+      include_tasks: tasks/set_hosts.yml
 
     - name: Set the Ceritifcate/LDAP Distinguished Names
-      include: tasks/set_distinguished_names.yml
+      include_tasks: tasks/set_distinguished_names.yml
 
     - name: Install and configure SASL
-      include: tasks/install_sasl.yml
+      include_tasks: tasks/install_sasl.yml
       when: client_auth_method == "ldap" and ldap_integration == "proxy"
 
     - name: Install MongoDB ensuring HugePages is disabled
-      include: tasks/install_mongod.yml
+      include_tasks: tasks/install_mongod.yml
 
     - name: Install and configure Kerberos client for mongod
-      include: tasks/configure_mongod_kerberos_env.yml
+      include_tasks: tasks/configure_mongod_kerberos_env.yml
       when: client_auth_method == "kerberos"
 
     - name: Generate TLS/SSL CA & server key/cert files for encryption over the wire
-      include: tasks/generate_server_keys.yml
+      include_tasks: tasks/generate_server_keys.yml
       when: ssl_enabled or client_auth_method == 'cert'
 
     - name: Generate key/certificate for each DB user (ie. db admin user + sample user)
-      include: tasks/generate_client_keys.yml
+      include_tasks: tasks/generate_client_keys.yml
       when: client_auth_method == 'cert' and ansible_hostname == "dbnode1"
 
     - name: Generate internal auth key file
-      include: tasks/create_internal_auth_key.yml
+      include_tasks: tasks/create_internal_auth_key.yml
       when: internal_auth_method == "keyfile"
 
     - name: Configure KMIP client key/cert/ca or internal encryption key file
-      include: tasks/configure_encryptdb_client_keys.yml
+      include_tasks: tasks/configure_encryptdb_client_keys.yml
       when: encryptdb_enabled
 
     - name: Ensure mongod instance starts when host boots and start it now

@@ -4,7 +4,7 @@
 # 
 
 - name: Set FIPS env variable for running OpenSSL
-  include: set_openssl_fips_var.yml
+  include_tasks: set_openssl_fips_var.yml
 
 - name: One time create the private key for the root CA and then self-sign the root CA's certificate
   shell: /usr/bin/openssl {{ item }}

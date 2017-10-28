@@ -7,29 +7,29 @@
   become_method: sudo
   tasks:
     - name: Fix internal network
-      include: tasks/fix_internal_network.yml
+      include_tasks: tasks/fix_internal_network.yml
 
     - name: Clear out tmp files
-      include: tasks/clean_tmp_files.yml
+      include_tasks: tasks/clean_tmp_files.yml
 
     - name: Check that environment variables have OK values
-      include: tasks/check_env_vars.yml
+      include_tasks: tasks/check_env_vars.yml
 
     - name: Populate /etc/hosts file with hostname entries for all VMs
-      include: tasks/set_hosts.yml
+      include_tasks: tasks/set_hosts.yml
 
     - name: Set the Ceritifcate/LDAP Distinguished Names
-      include: tasks/set_distinguished_names.yml
+      include_tasks: tasks/set_distinguished_names.yml
 
     - name: Install and configure OpenLDAP
-      include: tasks/install_openldap.yml
+      include_tasks: tasks/install_openldap.yml
       when: client_auth_method == "ldap"
 
     - name: Install and configure Kerberos KDC
-      include: tasks/install_kerberoskdc.yml
+      include_tasks: tasks/install_kerberoskdc.yml
       when: client_auth_method == "kerberos"
 
     - name: Install and configure PyKMIP
-      include: tasks/install_pykmip.yml
+      include_tasks: tasks/install_pykmip.yml
       when: encryptdb_enabled and encryptdb_key_loc == 'kmip'
 

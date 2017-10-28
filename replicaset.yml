@@ -8,10 +8,10 @@
   become_user: mongod
   tasks:
     - name: Set Mongo Shell command line params
-      include: tasks/set_mongoshell_params.yml
+      include_tasks: tasks/set_mongoshell_params.yml
 
     - name: Set the Ceritifcate/LDAP Distinguished Names
-      include: tasks/set_distinguished_names.yml
+      include_tasks: tasks/set_distinguished_names.yml
 
     - name: Obtain Kerberos ticket for MongoDB admin user to be able to connect to replica set
       shell: echo {{ db_adminuser_password }} | kinit {{ db_adminuser_name }} -V

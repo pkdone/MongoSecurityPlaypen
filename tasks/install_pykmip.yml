@@ -12,7 +12,7 @@
   command: pip install PyKMIP==0.4.0
 
 - name: Generate self-signed CA, server key/cert and client key/cert for KMIP use
-  include: tasks/generate_kmip_keys.yml
+  include_tasks: tasks/generate_kmip_keys.yml
 
 - name: Start the PyKMIP service
   template: src=files/pykmip/pykmip_server.py.j2 dest=/sbin/pykmip_server.py mode=a+x

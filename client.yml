@@ -5,17 +5,17 @@
     - vars/external_vars.yml
   tasks:
     - name: Fix internal network
-      include: tasks/fix_internal_network.yml
+      include_tasks: tasks/fix_internal_network.yml
       become: yes
       become_method: sudo
 
     - name: Populate /etc/hosts file with hostname entries for all VMs
-      include: tasks/set_hosts.yml
+      include_tasks: tasks/set_hosts.yml
       become: yes
       become_method: sudo
 
     - name: Set the Ceritifcate/LDAP Distinguished Names
-      include: tasks/set_distinguished_names.yml
+      include_tasks: tasks/set_distinguished_names.yml
 
     - name: Install the Python package manager (PIP)
       get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/home/vagrant/get-pip.py mode=a+x
@@ -30,7 +30,7 @@
       become_method: sudo
 
     - name: Install and configure Kerberos client for python client app
-      include: tasks/configure_pyclient_kerberos_env.yml
+      include_tasks: tasks/configure_pyclient_kerberos_env.yml
       when: client_auth_method == "kerberos"
 
     - name: Copy SSL CA file over (if SSL enabled), readable to all
@@ -53,5 +53,5 @@
     - debug: var=output.stderr.split('\n')
 
     - name: Clear out tmp files
-      include: tasks/clean_tmp_files.yml
+      include_tasks: tasks/clean_tmp_files.yml
 
