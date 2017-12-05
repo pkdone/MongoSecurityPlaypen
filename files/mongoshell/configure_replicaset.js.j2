@@ -10,7 +10,38 @@ for (var replica = 1; replica <= repsetMemberCount; replica++) {
     config.members.push({"_id": replica, "host": "dbnode" + replica + ".vagrant.dev:27017", "priority": priority});
 }
 
-print("Replica Set configuration:");
+print("Replica Set configuration being initiated:");
 printjson(config);
-rs.initiate(config);
+rsInitiateResult = rs.initiate(config);
+
+if (rsInitiateResult.ok == 0) {
+    print();
+    print("ERROR: Failure to initialise replica set"); 
+    printjson(rsInitiateResult);
+    print();
+    quit(1);
+}
+
+print("Waiting for the MongoDB Replica Set to initialise...");
+var status = rs.status();
+var attempts = 0;
+
+while (status.ok == 0 || (status.hasOwnProperty("myState") && status.myState != 1)) {
+    if (attempts >= 60) {
+        print();
+        print("ERROR: Gave up waiting for replica set to initialise"); 
+        printjson(status);
+        print();
+        quit(1);
+    }
+
+    attempts++;
+    print("."); 
+    sleep(2000);
+    status = rs.status();
+}
+
+// Final short sec wait to ensure everything properly ready even though status reported as ok
+sleep(2000);
+print("...initialisation of MongoDB Replica Set completed");
 

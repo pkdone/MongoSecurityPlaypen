@@ -1,9 +1,12 @@
 //
 // Mongo Shell script to create or referenece (if LDAP/Kerberos) a sample user
-// who has access to a sample database
+// who has access to a sample database (including setting allowable client IP
+// addresses for the sample user to authenticate from).
 //
 
 {% include "authenticate.js.j2" %}
+{% include "client_ips.js.j2" %}
+
 
 //
 // Create a read-only role on the adults collection/view only
@@ -36,7 +39,10 @@ db.getSiblingDB("admin").createUser(
     {
       user : "{{ db_sampleuser_name }}",
       pwd  : "{{ db_sampleuser_password }}",
-      roles: [ { role: rolename, db: "admin" } ]
+      roles: [ { role: rolename, db: "admin" } ],
+      authenticationRestrictions: [ {
+            clientSource: clientIPs
+      } ]
     }
  );
 {% elif client_auth_method == 'cert' %}
@@ -44,17 +50,30 @@ db.getSiblingDB("admin").createUser(
 db.getSiblingDB("$external").createUser(
     {
       user : "CN={{ db_sampleuser_name }}{{ client_dn_suffix }}",
-      roles: [ { role: rolename, db: "admin" } ]
+      roles: [ { role: rolename, db: "admin" } ],
+      authenticationRestrictions: [ {
+            clientSource: clientIPs
+      } ]
     }
  );
 {% elif client_auth_method == 'ldap' and ldap_integration == 'direct' and role_membership == 'external' %}
-// Nothing to do as as using native LDAP integration with external authorization, so no need to create a user mapped to the role, because the external LDAP configuration already infers it
+// Don't create user because using native LDAP integration with external authorization, because the external LDAP configuration already infers it 
+// the user - however take this opportunitiy to define the IP address whitelist against the role
+db.getSiblingDB("admin").updateRole("cn=AppReadOnly,ou=Groups,dc={{ org_name }},dc={{ org_type }}", {
+    authenticationRestrictions: [ {
+        clientSource: clientIPs
+    } ]
+ });
+
 {% elif client_auth_method == 'ldap' %}
 // Creating external authentication reference for LDAP proxy or direct user access, and role mappings managed internally
 db.getSiblingDB("$external").createUser(
     {
       user : "{{ db_sampleuser_name }}",
-      roles: [ { role: rolename, db: "admin" } ]
+      roles: [ { role: rolename, db: "admin" } ],
+      authenticationRestrictions: [ {
+            clientSource: clientIPs
+      } ]
     }
  );
 {% elif client_auth_method == 'kerberos' %}
@@ -62,7 +81,10 @@ db.getSiblingDB("$external").createUser(
 db.getSiblingDB("$external").createUser(
     {
       user : "{{ db_sampleuser_name }}@{{ org_name|upper }}.{{ org_type|upper }}",
-      roles: [ { role: rolename, db: "admin" } ]
+      roles: [ { role: rolename, db: "admin" } ],
+      authenticationRestrictions: [ {
+            clientSource: clientIPs
+      } ]
     }
  );
 {% else %}

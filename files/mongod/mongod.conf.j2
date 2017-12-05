@@ -23,6 +23,7 @@ systemLog:
    logAppend: true
 
 net:
+   bindIp: 0.0.0.0
    port: 27017
 {% if ssl_enabled or fips140_2_enabled %}
    ssl:
@@ -40,7 +41,7 @@ net:
 {% endif %}
 
 replication:
-    replSetName: "{{ rep_set_name }}"
+   replSetName: "{{ rep_set_name }}"
 
 {% if internal_auth_method != 'none' or encryptdb_enabled or redactlogs_enabled %}
 security:

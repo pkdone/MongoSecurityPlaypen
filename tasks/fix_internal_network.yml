@@ -9,7 +9,7 @@
 # See: https://github.com/openshift/openshift-ansible/issues/331
 # 
 
-- name: Being up the internal network with NetworkManager disabled
+- name: Bring up the internal network with NetworkManager disabled
   command: ifup enp0s8
 - command: chkconfig NetworkManager off
 - command: chkconfig network on

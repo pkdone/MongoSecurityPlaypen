@@ -26,9 +26,8 @@
         - create_normal_user_and_role.js
         - reset_priorities.js
 
-    - name: Configure replica set cluster then pause to allow primary to come up properly
+    - name: Configure replica set cluster waiting until the primary has come up properly
       command: mongo {{ connect_string }} /tmp/configure_replicaset.js
-    - pause: seconds=30
 
     - name: Run Mongo shell scripts for creating users and sample data
       command: mongo {{ connect_string }} /tmp/{{ item }}

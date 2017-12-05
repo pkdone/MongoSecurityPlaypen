@@ -9,6 +9,7 @@ The project demonstrates the following MongoDB 3.4 security capabilities.
 * __Client Authentication__ - SCRAM-SHA-1, Certificate, LDAP (Proxy & Direct) & Kerberos
 * __Internal Authentication__ - Keyfile & Certificate
 * __Role Based Access Control__ - Internal-DB & External-LDAP authorization
+* __User Access IP Address Whitelists__
 * __Auditing__
 * __Log Redaction__
 * __Encryption-over-the-Wire__ - TLS/SSL
@@ -68,13 +69,13 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
     # Connect to the VM hosting OpenLDAP, MIT Kerberos KDC and PyKMIP Server
     $ vagrant ssh centralit
 
-    # Connect to the VM hosting the 1st MongoDB Database Replica in the Replica-Set
+    # Connect to the VM hosting the 1st MongoDB Database Replica in the Replica Set
     $ vagrant ssh dbnode1
 
-    # Connect to the VM hosting the 2nd MongoDB Database Replica in the Replica-Set
+    # Connect to the VM hosting the 2nd MongoDB Database Replica in the Replica Set
     $ vagrant ssh dbnode2
 
-    # Connect to the VM hosting the 3rd MongoDB Database Replica in the Replica-Set
+    # Connect to the VM hosting the 3rd MongoDB Database Replica in the Replica Set
     $ vagrant ssh dbnode3
 
     # Connect to the VM hosting the Test Client Python Application
@@ -103,6 +104,7 @@ To completely remove the VMs, ready to start all over again with 'vagrant up', r
 Each sub-section below outlines a specific way to connect to the MongoDB cluster, depending on the type of MongoDB authentication that has been configured for the cluster.
 
 **Notes:**
+ * Users must connect to the Replica Set from one of the following IP addresses, due to an IP Address Whitelist that has been defined to apply to all database users: 127.0.0.1, 192.168.14.100, 192.168.14.101, 192.168.14.102, 192.168.14.103, 192.168.14.109.
  * For some types of authentication, when connecting via the Mongo Shell, Fully Qualified Domain Names - FQDNs (eg. dbnode1.vagrant.dev), need to be used rather than just hostnames (eg. dbnode1, localhost) or IP addresses (eg. 192.168.14.101, or 127.0.0.1). This is necessary when using Kerberos, Certificates and/or TLS.
  * For some types of authentication, when invoking the Mongo Shell, the 'mongo' command has to be run as the 'mongod' OS user because a referenced file (such as a keyfile/certificate or a Kerberos keytab), has been "locked down" to only be visible to the 'mongod' OS user that runs the 'mongod' OS process. Hence the use of 'sudo' in those cases.
 
@@ -215,6 +217,13 @@ Once authenticated in the Shell (see section 2.3), to see the authenticated user
 
     > db.getSiblingDB("admin").runCommand({connectionStatus:1})
 
+Also, once authenticated in the Shell, some of the system collections can also be queried to see further information about the admin and sample users/roles, including what the client IP address whitelist is, which each of them has been constrained by, for restricting user access to the replica set: 
+
+    // If authentication based on LDAP Direct with dynamic role membership authorization using groups in the LDAP directory:
+    > db.getSiblingDB("admin").system.roles.find().pretty()
+    // For all other types of authentication:
+    > db.getSiblingDB("admin").system.users.find().pretty()
+
 The MongoDB database/collection that is populated with sample data is: 'maindata.people'. To see the contents of the sample database collection, start the Mongo Shell (see section 2.3) and run:
 
     > use maindata
@@ -309,9 +318,9 @@ If Kerberos has been configured, and vagrant halt & up have been run to restart 
 
 ## 3  Major Software Packages Installed
 * CentOS 7.3
-* MongoDB Enterprise latest 3.4.x version (was version 3.4.10 on 28-Oct-2017)
-* OpenLDAP (slapd) latest version in CentOS 7.3 Yum Repository (was version 2.4.40-13 on 14-Aug-2017)
-* MIT Kerberos KDC (krb5-server) latest version in CentOS 7.3 Yum Repository (was version 1.14.1-27 on 14-Aug-2017)
+* MongoDB Enterprise latest 3.6.x version (was version 3.6.0 on 05-Dec-2017)
+* OpenLDAP (slapd) latest version in CentOS 7.3 Yum Repository (was version 2.4.44-5 on 05-Dec-2017)
+* MIT Kerberos KDC (krb5-server) latest version in CentOS 7.3 Yum Repository (was version 1.15.1-8 on 05-Dec-2017)
 * PyKMIP version 0.4.0
 
 
