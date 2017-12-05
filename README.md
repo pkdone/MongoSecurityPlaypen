@@ -329,7 +329,6 @@ If Kerberos has been configured, and vagrant halt & up have been run to restart 
 * PyKMIP has no built-in persistence, so if vagrant halt and then vagrant up have been run, the mongod replicas won't start properly, if encryption is enabled using KMIP. As a result, vars/external_vars.yml has been changed to use keyfile by default, for encryption-at-rest, to reduce the number of people that hit this issue.
 * When generating the Kerberos keytab on the 'centralit' VM, generate separate keytabs for dbnode1, dbnode2 & dbnode3 for better security isolation
 * Configure connectivity (both Proxy and Direct) to Open LDAP to use TLS
-
 * Extend the 'yum' timeout duration, to avoid timeout failures when running 'vagrant up' with a slow internet connection.
 * Cache the MongoDB Enterprise yum repository's contents locally ready for quicker re-running of 'vagrant up'
 
