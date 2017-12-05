@@ -4,7 +4,7 @@ MongoSecurityPlaypen is intended to be used for learning, exploring or demo'ing 
 
 **WARNING** *This project is intentionally NOT "production secure" to make it easier for people to explore. For example, no firewalls are configured and passwords are passed around on the command line which can be view-able in OS user history and OS process lists. Other potential security holes are likely to exist. It is strongly suggested that you consult the [MongoDB Security Checklist](https://docs.mongodb.com/manual/administration/security-checklist/).* 
 
-The project demonstrates the following MongoDB 3.4 security capabilities.
+The project demonstrates the following MongoDB 3.6 security capabilities.
 
 * __Client Authentication__ - SCRAM-SHA-1, Certificate, LDAP (Proxy & Direct) & Kerberos
 * __Internal Authentication__ - Keyfile & Certificate
