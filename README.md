@@ -38,10 +38,10 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
 
 ### 1.2 Main Steps to Run
 
-1. Download or Clone this repository (see green "Clone or Download" button at top right of project home page). Example command to clone:.
+1. Download or Clone this repository (see green "Clone or Download" button at top right of project home page). Example command to clone:
 
     ```
-    $ git clone git@github.com:pkdone/MongoSecurityPlaypen.git
+    $ git clone https://github.com/pkdone/MongoSecurityPlaypen.git
     $ cd MongoSecurityPlaypen
     ```
 
