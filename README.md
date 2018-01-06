@@ -45,7 +45,7 @@ Ensure the following dependencies are already fulfilled on the host Laptop/PC:
     $ cd MongoSecurityPlaypen
     ```
 
-2. If required, change any values in the text file __vars/external_vars.yml__ to define which security features should be turned on and off
+2. If required, change any values in the text file __vars/external_vars.yml__ to define which __security features should be turned on and off__ (e.g. to enable Kerberos, to enable KMIP)
 3. From the terminal/shell, ensure the current directory is the __base directory__ of this MongoSecurityPlaypen project (i.e. the directory containing the file __Vagrantfile__)
 4. __Run the following commands__ to configure the 5-virtual-machine environment outlined in the diagram above - includes final step of automatically running the Test Client Python Application and listing the results in the console:
 
